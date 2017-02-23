@@ -7,6 +7,11 @@ export default class LambdaModel {
     private _instance;
 
     /**
+     * API Properties
+     */
+    private _postConstructorMethod;
+
+    /**
      * Lambda Properties
      */
     private _eventProperty;
@@ -20,6 +25,7 @@ export default class LambdaModel {
 
     private _queryParamsProperty;
     private _pathParamsProperty;
+    private _headersProperty;
     private _methodProperty;
 
     private _getMethod;
@@ -157,5 +163,21 @@ export default class LambdaModel {
 
     set deleteMethod(value) {
         this._deleteMethod = value;
+    }
+
+    get postConstructorMethod() {
+        return this._postConstructorMethod;
+    }
+
+    set postConstructorMethod(value) {
+        this._postConstructorMethod = value;
+    }
+
+    get headersProperty() {
+        return this._headersProperty;
+    }
+
+    set headersProperty(value) {
+        this._headersProperty = value;
     }
 }

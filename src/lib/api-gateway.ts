@@ -3,46 +3,202 @@
  */
 
 import LambdaManager from "./lambda-manager";
+import LambdaModel from "./lambda-model";
+
+export class ApiGateway {
+
+    public static queryParams;
+    public static pathParams;
+    public static method;
+    public static headers;
+
+    public static addGetMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.getMethod = method;
+    }
+
+    public static addPostMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.postMethod = method;
+    }
+
+    public static addPutMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.putMethod = method;
+    }
+
+    public static addPatchMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.patchMethod = method;
+    }
+
+    public static addOptionsMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.optionsMethod = method;
+    }
+
+    public static addDeleteMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.deleteMethod = method;
+    }
+
+    public static addHeadMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.headMethod = method;
+    }
+
+    public static addHandlerMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.handlerMethod= method;
+    }
+
+    public static addPostConstructorMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.postConstructorMethod = method;
+    }
+
+    public static addHeadersProperty(target, property) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.headersProperty = property;
+    }
+
+    public static executeHttpRequest(lambda:LambdaModel) {
+        if (!lambda) { return; }
+        switch (LambdaManager.instance.event.method) {
+            case 'GET': ApiGateway.executeGetRequest(lambda); break;
+            case 'PUT': ApiGateway.executePutRequest(lambda); break;
+            case 'POST': ApiGateway.executePostRequest(lambda); break;
+            case 'PATCH': ApiGateway.executePatchRequest(lambda); break;
+            case 'OPTIONS': ApiGateway.executeOptionsRequest(lambda); break;
+            case 'HEAD': ApiGateway.executeHeadRequest(lambda); break;
+            case 'DELETE': ApiGateway.executeDeleteRequest(lambda); break;
+        }
+    }
+
+    private static executeGetRequest(lambda:LambdaModel){
+        if (!lambda) {return;}
+        if (lambda.getMethod) {
+            lambda.instance[lambda.getMethod]();
+        }
+    }
+
+    private static executePostRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.postMethod) {
+            lambda.instance[lambda.postMethod]();
+        }
+    }
+
+    private static executePutRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.putMethod) {
+            lambda.instance[lambda.putMethod]();
+        }
+    }
+
+    private static executeDeleteRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.deleteMethod) {
+            lambda.instance[lambda.deleteMethod]();
+        }
+    }
+
+    private static executeHeadRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.headMethod) {
+            lambda.instance[lambda.headMethod]();
+        }
+
+    }
+
+    private static executeOptionsRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.optionsMethod) {
+            lambda.instance[lambda.optionsMethod]();
+        }
+    }
+
+    private static executePatchRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.patchMethod) {
+            lambda.instance[lambda.patchMethod]();
+        }
+    }
+
+    public static prepareHttpRequestVariables(event) {
+        if (event) {
+            ApiGateway.queryParams = event.queryParams;
+            ApiGateway.pathParams = event.pathParams;
+            ApiGateway.method = event.method;
+            ApiGateway.headers = event.headers;
+        }
+    }
+
+    public static setLambdaProperties(lambda:LambdaModel) {
+        if (lambda.headersProperty) {
+            lambda.instance[lambda.headersProperty] = ApiGateway.headers;
+        }
+        if (lambda.queryParamsProperty) {
+            lambda.instance[lambda.queryParamsProperty] = ApiGateway.queryParams;
+        }
+    }
+}
 
 export function Get() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addGetMethod(target, methodName);
+        ApiGateway.addGetMethod(target, methodName);
     }
 }
 
 export function Post() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addPostMethod(target, methodName);
+        ApiGateway.addPostMethod(target, methodName);
     }
 }
 
 export function Put() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addPutMethod(target, methodName);
+        ApiGateway.addPutMethod(target, methodName);
     }
 }
 
 export function Patch() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addPatchMethod(target, methodName);
+        ApiGateway.addPatchMethod(target, methodName);
     }
 }
 
 export function Options() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addOptionsMethod(target, methodName);
+        ApiGateway.addOptionsMethod(target, methodName);
     }
 }
 
 export function Delete() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addDeleteMethod(target, methodName);
+        ApiGateway.addDeleteMethod(target, methodName);
     }
 }
 
 export function Head() {
     return function(target: Object, methodName: string) {
-        LambdaManager.instance.addHeadMethod(target, methodName);
+        ApiGateway.addHeadMethod(target, methodName);
+    }
+}
+
+export function Headers() {
+    return function(target: Object, propertyKey: string ) {
+        ApiGateway.addHeadersProperty(target, propertyKey);
     }
 }
 

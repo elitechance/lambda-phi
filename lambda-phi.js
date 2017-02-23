@@ -3,11 +3,12 @@
  */
 "use strict";
 var lambda_manager_1 = require('./lib/lambda-manager');
+var api_gateway_1 = require("./lib/api-gateway");
 var lambdaManager = new lambda_manager_1.default();
 lambda_manager_1.default.instance = lambdaManager;
 function LambdaHandler(event, context, callback) {
     lambdaManager.event = event;
-    lambdaManager.prepareHttpRequestVariables();
+    api_gateway_1.ApiGateway.prepareHttpRequestVariables(event);
     lambdaManager.context = context;
     lambdaManager.callback = callback;
     lambdaManager.processLambdas();
@@ -19,18 +20,18 @@ function Lambda() {
     };
 }
 exports.Lambda = Lambda;
+function PostConstructor() {
+    return function (target, methodName) {
+        lambdaManager.addPostConstructorMethod(target, methodName);
+    };
+}
+exports.PostConstructor = PostConstructor;
 function Context() {
     return function (target, propertyKey) {
         lambdaManager.addContextProperty(target, propertyKey);
     };
 }
 exports.Context = Context;
-function Handler() {
-    return function (target, methodName) {
-        lambdaManager.addHandlerMethod(target, methodName);
-    };
-}
-exports.Handler = Handler;
 function Callback() {
     return function (target, propertyKey) {
         lambdaManager.addCallbackProperty(target, propertyKey);

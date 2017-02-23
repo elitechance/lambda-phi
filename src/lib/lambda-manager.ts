@@ -1,4 +1,5 @@
 import LambdaModel from './lambda-model';
+import {ApiGateway} from "./api-gateway";
 
 export default class LambdaManager {
     public static instance:LambdaManager;
@@ -8,15 +9,10 @@ export default class LambdaManager {
     private _callback;
     private _exports;
 
-    private _queryParams;
-    private _pathParams;
-    private _method;
-    private _headers;
-
     private _lambdas:LambdaModel[] = [];
     private _targets:Object[] = [];
 
-    private addLambda(target) {
+    public addLambda(target) {
         let lambdaModel = this.getLambda(target);
         if (lambdaModel == null) {
             let instance = new target.constructor();
@@ -39,31 +35,15 @@ export default class LambdaManager {
         }
     }
 
+    private executePostConstructor(lambda:LambdaModel) {
+        if (lambda) {
+            if (lambda.postConstructorMethod) { lambda.instance[lambda.postConstructorMethod](); }
+        }
+    }
+
     private executeHandler(lambda:LambdaModel) {
         if (lambda) {
             if (lambda.handlerMethod) { lambda.instance[lambda.handlerMethod](); }
-        }
-    }
-
-    private executeHttpRequest(lambda:LambdaModel) {
-        if (!lambda) { return; }
-        switch (this.method) {
-            case 'GET': this.executeGetRequest(lambda); break;
-            case 'PUT': this.executePutRequest(lambda); break;
-            case 'POST': this.executePostRequest(lambda); break;
-            case 'PATCH': this.patchRequest(lambda); break;
-            case 'OPTIONS': this.optionsRequest(lambda); break;
-            case 'HEAD': this.headRequest(lambda); break;
-            case 'DELETE': this.deleteRequest(lambda); break;
-        }
-    }
-
-    public prepareHttpRequestVariables() {
-        if (this.event) {
-            this.queryParams = this.event.queryParams;
-            this.pathParams = this.event.pathParams;
-            this.method = this.event.method;
-            this.headers = this.event.headers;
         }
     }
 
@@ -74,12 +54,14 @@ export default class LambdaManager {
             instance = new this._targets[i]();
             let lambda = this.getLambda(instance);
             this.setLambdaProperties(lambda);
+            ApiGateway.setLambdaProperties(lambda);
+            this.executePostConstructor(lambda);
             this.executeHandler(lambda);
-            this.executeHttpRequest(lambda);
+            ApiGateway.executeHttpRequest(lambda);
         }
     }
 
-    public getLambda(target) {
+    public getLambda(target):LambdaModel {
         let length = this._lambdas.length;
         for (let i = 0; i < length;i++) {
             if (this._lambdas[i].name == target.constructor.name) {
@@ -89,52 +71,16 @@ export default class LambdaManager {
         return null;
     }
 
-    public addGetMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.getMethod = method;
-    }
-
-    public addPostMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.postMethod = method;
-    }
-
-    public addPutMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.putMethod = method;
-    }
-
-    public addPatchMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.patchMethod = method;
-    }
-
-    public addOptionsMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.optionsMethod = method;
-    }
-
-    public addDeleteMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.deleteMethod = method;
-    }
-
-    public addHeadMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
-        lambda.headMethod = method;
-    }
-
     public addHandlerMethod(target, method) {
         this.addLambda(target);
         let lambda = this.getLambda(target);
         lambda.handlerMethod= method;
+    }
+
+    public addPostConstructorMethod(target, method) {
+        this.addLambda(target);
+        let lambda = this.getLambda(target);
+        lambda.postConstructorMethod = method;
     }
 
     public addCallbackProperty(target, property) {
@@ -153,56 +99,6 @@ export default class LambdaManager {
         this.addLambda(target);
         let lambda = this.getLambda(target);
         lambda.contextProperty = property;
-    }
-
-    private executeGetRequest(lambda:LambdaModel){
-        if (!lambda) {return;}
-        if (lambda.getMethod) {
-            lambda.instance[lambda.getMethod]();
-        }
-    }
-
-    private executePostRequest(lambda:LambdaModel) {
-        if (!lambda) {return;}
-        if (lambda.postMethod) {
-            lambda.instance[lambda.postMethod]();
-        }
-    }
-
-    private executePutRequest(lambda:LambdaModel) {
-        if (!lambda) {return;}
-        if (lambda.putMethod) {
-            lambda.instance[lambda.putMethod]();
-        }
-    }
-
-    private deleteRequest(lambda:LambdaModel) {
-        if (!lambda) {return;}
-        if (lambda.deleteMethod) {
-            lambda.instance[lambda.deleteMethod]();
-        }
-    }
-
-    private headRequest(lambda:LambdaModel) {
-        if (!lambda) {return;}
-        if (lambda.headMethod) {
-            lambda.instance[lambda.headMethod]();
-        }
-
-    }
-
-    private optionsRequest(lambda:LambdaModel) {
-        if (!lambda) {return;}
-        if (lambda.optionsMethod) {
-            lambda.instance[lambda.optionsMethod]();
-        }
-    }
-
-    private patchRequest(lambda:LambdaModel) {
-        if (!lambda) {return;}
-        if (lambda.patchMethod) {
-            lambda.instance[lambda.patchMethod]();
-        }
     }
 
     set event(value) {
@@ -233,48 +129,8 @@ export default class LambdaManager {
         return this._context;
     }
 
-    get exports() {
-        return this._exports;
-    }
-
-    set exports(value) {
-        this._exports = value;
-    }
-
     set rawHandler(value) {
         this._rawHandler = value;
-    }
-
-    get queryParams() {
-        return this._queryParams;
-    }
-
-    set queryParams(value) {
-        this._queryParams = value;
-    }
-
-    get pathParams() {
-        return this._pathParams;
-    }
-
-    set pathParams(value) {
-        this._pathParams = value;
-    }
-
-    get method() {
-        return this._method;
-    }
-
-    set method(value) {
-        this._method = value;
-    }
-
-    get headers() {
-        return this._headers;
-    }
-
-    set headers(value) {
-        this._headers = value;
     }
 
 }

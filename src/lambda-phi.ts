@@ -3,13 +3,14 @@
  */
 
 import LambdaManager from './lib/lambda-manager';
+import {ApiGateway} from "./lib/api-gateway";
 
 let lambdaManager = new LambdaManager();
 LambdaManager.instance = lambdaManager;
 
 export function LambdaHandler(event, context, callback) {
     lambdaManager.event = event;
-    lambdaManager.prepareHttpRequestVariables();
+    ApiGateway.prepareHttpRequestVariables(event);
 
     lambdaManager.context = context;
     lambdaManager.callback = callback;
@@ -22,15 +23,15 @@ export function Lambda() {
     }
 }
 
-export function Context() {
-    return function(target: Object, propertyKey: string ) {
-        lambdaManager.addContextProperty(target, propertyKey);
+export function PostConstructor() {
+    return function(target: Object, methodName: string) {
+        lambdaManager.addPostConstructorMethod(target, methodName);
     }
 }
 
-export function Handler() {
-    return function(target: Object, methodName: string) {
-        lambdaManager.addHandlerMethod(target, methodName);
+export function Context() {
+    return function(target: Object, propertyKey: string ) {
+        lambdaManager.addContextProperty(target, propertyKey);
     }
 }
 
