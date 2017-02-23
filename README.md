@@ -1,5 +1,5 @@
 # lambda-phi (ALPHA)
-AWS API Gateway and Lambda framework
+Typescript framework for AWS API Gateway and Lambda
 
 Sample Convention
 ```
@@ -7,7 +7,7 @@ import { LambdaHandler, Lambda, Event, Context, Callback} from 'lambda-phi';
 import { Get, Put, Post, Delete } from 'lambda-phi/lib/api-gateway';
 
 @Lambda()
-class Affiliates {
+class LambdaClass {
     @Context() context;
     @Callback() callback;
     @Event() events;
