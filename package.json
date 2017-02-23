@@ -1,0 +1,28 @@
+{
+  "name": "lambda-phi",
+  "version": "1.0.0",
+  "description": "AWS API Gateway and Lambda framework",
+  "main": "lambda-phi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elitechance/lambda-phi.git"
+  },
+  "keywords": [
+    "api",
+    "gateway",
+    "lambda",
+    "aws"
+  ],
+  "author": "Ethan Dave B. Gomez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elitechance/lambda-phi/issues"
+  },
+  "homepage": "https://github.com/elitechance/lambda-phi#readme",
+  "devDependencies": {
+    "@types/node": "^7.0.5"
+  }
+}
