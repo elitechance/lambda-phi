@@ -4,17 +4,18 @@ Typescript framework for AWS API Gateway and Lambda
 Sample Convention
 ```
 import { LambdaHandler, Lambda, Event, Context, Callback, PostConstructor } from 'lambda-phi';
-import { Get, Put, Post, Delete, Headers } from 'lambda-phi/lib/api-gateway';
+import { Get, Put, Post, Delete, Headers, PathParams, QueryParams, Method } from 'lambda-phi/lib/api-gateway';
 
 @Lambda()
 class LambdaClass {
     @Context() context;
     @Callback() callback;
     @Event() events;
-    @Headers() headers;
+    @Headers() headers; // Content-Type, Authorization, etc..
+    @PathParams() pathParams; // /users/{id} --> this.pathParams.id
+    @QueryParams() queryParams; // ?param1=value1&param2=value2
+    @Method() method; // GET, POST, ...
 
-    test = 'name';
-    
     @PostConstructor()
     public postConstructor() {
         console.log("post constructor");

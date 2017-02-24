@@ -72,6 +72,24 @@ export class ApiGateway {
         lambda.headersProperty = property;
     }
 
+    public static addQueryParamsProperty(target, property) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.queryParamsProperty = property;
+    }
+
+    public static addMethodProperty(target, property) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.methodProperty = property;
+    }
+
+    public static addPathParamsProperty(target, property) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.pathParamsProperty = property;
+    }
+
     public static executeHttpRequest(lambda:LambdaModel) {
         if (!lambda) { return; }
         switch (LambdaManager.instance.event.method) {
@@ -151,6 +169,12 @@ export class ApiGateway {
         if (lambda.queryParamsProperty) {
             lambda.instance[lambda.queryParamsProperty] = ApiGateway.queryParams;
         }
+        if (lambda.pathParamsProperty) {
+            lambda.instance[lambda.pathParamsProperty] = ApiGateway.pathParams;
+        }
+        if (lambda.methodProperty) {
+            lambda.instance[lambda.methodProperty] = ApiGateway.method;
+        }
     }
 }
 
@@ -199,6 +223,24 @@ export function Head() {
 export function Headers() {
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addHeadersProperty(target, propertyKey);
+    }
+}
+
+export function QueryParams() {
+    return function(target: Object, propertyKey: string ) {
+        ApiGateway.addQueryParamsProperty(target, propertyKey);
+    }
+}
+
+export function PathParams() {
+    return function(target: Object, propertyKey: string ) {
+        ApiGateway.addPathParamsProperty(target, propertyKey);
+    }
+}
+
+export function Method() {
+    return function(target: Object, propertyKey: string ) {
+        ApiGateway.addMethodProperty(target, propertyKey);
     }
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "lambda-phi",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Typesscript framework AWS API Gateway and Lambda",
   "main": "lambda-phi.js",
   "scripts": {
