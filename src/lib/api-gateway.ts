@@ -11,6 +11,7 @@ export class ApiGateway {
     public static pathParams;
     public static method;
     public static headers;
+    public static body;
 
     public static addGetMethod(target, method) {
         LambdaManager.instance.addLambda(target);
@@ -82,6 +83,12 @@ export class ApiGateway {
         LambdaManager.instance.addLambda(target);
         let lambda = LambdaManager.instance.getLambda(target);
         lambda.methodProperty = property;
+    }
+
+    public static addBodyProperty(target, property) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.bodyProperty = property;
     }
 
     public static addPathParamsProperty(target, property) {
@@ -159,6 +166,7 @@ export class ApiGateway {
             ApiGateway.pathParams = event.pathParams;
             ApiGateway.method = event.method;
             ApiGateway.headers = event.headers;
+            ApiGateway.body = event.body;
         }
     }
 
@@ -174,6 +182,9 @@ export class ApiGateway {
         }
         if (lambda.methodProperty) {
             lambda.instance[lambda.methodProperty] = ApiGateway.method;
+        }
+        if (lambda.bodyProperty) {
+            lambda.instance[lambda.bodyProperty] = ApiGateway.body;
         }
     }
 }
@@ -241,6 +252,12 @@ export function PathParams() {
 export function Method() {
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addMethodProperty(target, propertyKey);
+    }
+}
+
+export function Body() {
+    return function(target: Object, propertyKey: string ) {
+        ApiGateway.addBodyProperty(target, propertyKey);
     }
 }
 

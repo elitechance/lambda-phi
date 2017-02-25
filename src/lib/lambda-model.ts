@@ -26,6 +26,7 @@ export default class LambdaModel {
     private _queryParamsProperty;
     private _pathParamsProperty;
     private _headersProperty;
+    private _bodyProperty;
     private _methodProperty;
 
     private _getMethod;
@@ -179,5 +180,13 @@ export default class LambdaModel {
 
     set headersProperty(value) {
         this._headersProperty = value;
+    }
+
+    get bodyProperty() {
+        return this._bodyProperty;
+    }
+
+    set bodyProperty(value) {
+        this._bodyProperty = value;
     }
 }
