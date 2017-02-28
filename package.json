@@ -1,7 +1,7 @@
 {
   "name": "lambda-phi",
   "version": "1.0.5",
-  "description": "Typesscript framework for AWS API Gateway and Lambda (ALPHA)",
+  "description": "Typescript framework for AWS API Gateway and Lambda (ALPHA)",
   "main": "lambda-phi.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -14,7 +14,8 @@
     "api",
     "gateway",
     "lambda",
-    "aws"
+    "aws",
+    "typescript"
   ],
   "author": "Ethan Dave B. Gomez",
   "license": "MIT",
