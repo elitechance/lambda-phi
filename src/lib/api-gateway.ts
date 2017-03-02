@@ -7,11 +7,17 @@ import LambdaModel from "./lambda-model";
 
 export class ApiGateway {
 
-    public static queryParams;
-    public static pathParams;
-    public static method;
-    public static headers;
-    public static body;
+    private static queryParams;
+    private static pathParams;
+    private static method;
+    private static headers;
+    private static body;
+
+    public static queryParamsAlias;
+    public static pathParamsAlias;
+    public static methodAlias;
+    public static headersAlias;
+    public static bodyAlias;
 
     public static addGetMethod(target, method) {
         LambdaManager.instance.addLambda(target);
@@ -99,7 +105,7 @@ export class ApiGateway {
 
     public static executeHttpRequest(lambda:LambdaModel) {
         if (!lambda) { return; }
-        switch (LambdaManager.instance.event.method) {
+        switch (ApiGateway.method) {
             case 'GET': ApiGateway.executeGetRequest(lambda); break;
             case 'PUT': ApiGateway.executePutRequest(lambda); break;
             case 'POST': ApiGateway.executePostRequest(lambda); break;
@@ -162,11 +168,36 @@ export class ApiGateway {
 
     public static prepareHttpRequestVariables(event) {
         if (event) {
-            ApiGateway.queryParams = event.queryParams;
-            ApiGateway.pathParams = event.pathParams;
-            ApiGateway.method = event.method;
-            ApiGateway.headers = event.headers;
-            ApiGateway.body = event.body;
+            if (ApiGateway.queryParamsAlias) {
+                ApiGateway.queryParams = event[ApiGateway.queryParamsAlias];
+            }
+            else {
+                ApiGateway.queryParams = event.queryParams;
+            }
+            if (ApiGateway.pathParamsAlias) {
+                ApiGateway.pathParams = event[ApiGateway.pathParamsAlias];
+            }
+            else {
+                ApiGateway.pathParams = event.pathParams;
+            }
+            if (ApiGateway.methodAlias) {
+                ApiGateway.method = event[ApiGateway.methodAlias];
+            }
+            else {
+                ApiGateway.method = event.method;
+            }
+            if (ApiGateway.headersAlias) {
+                ApiGateway.headers = event[ApiGateway.headersAlias];
+            }
+            else {
+                ApiGateway.headers = event.headers;
+            }
+            if (ApiGateway.bodyAlias) {
+                ApiGateway.headers = event[ApiGateway.bodyAlias];
+            }
+            else {
+                ApiGateway.body = event.body;
+            }
         }
     }
 
@@ -231,31 +262,40 @@ export function Head() {
     }
 }
 
-export function Headers() {
+/**
+ * "alias" will be the alternative name defined in Body Mapping Templates
+ */
+
+export function Headers(alias?:string) {
+    ApiGateway.headersAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addHeadersProperty(target, propertyKey);
     }
 }
 
-export function QueryParams() {
+export function QueryParams(alias?:string) {
+    ApiGateway.queryParamsAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addQueryParamsProperty(target, propertyKey);
     }
 }
 
-export function PathParams() {
+export function PathParams(alias?:string) {
+    ApiGateway.pathParamsAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addPathParamsProperty(target, propertyKey);
     }
 }
 
-export function Method() {
+export function Method(alias?:string) {
+    ApiGateway.methodAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addMethodProperty(target, propertyKey);
     }
 }
 
-export function Body() {
+export function Body(alias?:string) {
+    ApiGateway.bodyAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addBodyProperty(target, propertyKey);
     }

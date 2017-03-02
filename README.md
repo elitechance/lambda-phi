@@ -1,7 +1,7 @@
 # lambda-phi (ALPHA)
 Typescript framework for AWS API Gateway and Lambda
 
-Api Gateway: Body Template Mapping config
+Api Gateway: Body Mapping Templates config
 ```
 {
   "method": "$context.httpMethod",
@@ -63,4 +63,16 @@ class LambdaClass {
 
 exports.handler = LambdaHandler;
 
+```
+
+If you're using different Body Mapping variables, you can use the alias feature.
+
+```typescript
+//...
+class A {
+    //...
+    @QueryParams('qParams') qParams;
+    //...
+}
+//...
 ```

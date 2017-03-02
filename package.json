@@ -1,6 +1,6 @@
 {
   "name": "lambda-phi",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Typescript framework for AWS API Gateway and Lambda (ALPHA)",
   "main": "lambda-phi.js",
   "scripts": {
@@ -11,8 +11,7 @@
     "url": "git+https://github.com/elitechance/lambda-phi.git"
   },
   "keywords": [
-    "api",
-    "gateway",
+    "api gateway",
     "lambda",
     "aws",
     "typescript"
