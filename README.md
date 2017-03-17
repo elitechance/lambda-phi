@@ -1,8 +1,9 @@
-# lambda-phi (ALPHA)
+# lambda-phi
 Typescript framework for AWS API Gateway and Lambda
 
-Api Gateway: Body Mapping Templates config
-```
+
+This framework assumes this body mapping template in API Gateway
+```javascript
 {
   "method": "$context.httpMethod",
   "body" : $input.json('$'),
@@ -28,7 +29,7 @@ Api Gateway: Body Mapping Templates config
 ```
 
 Sample Convention
-```
+```typescript
 import { LambdaHandler, Lambda, Event, Context, Callback, PostConstructor } from 'lambda-phi';
 import { Get, Put, Post, Delete, Headers, PathParams, QueryParams, Method, Body } from 'lambda-phi/lib/api-gateway';
 
@@ -39,7 +40,7 @@ class LambdaClass {
     @Event() event;
     @Headers() headers; // Content-Type, Authorization, etc..
     @PathParams() pathParams; // /users/{id} --> this.pathParams.id
-    @QueryParams() queryParams; // ?param1=value1&param2=value2
+    @QueryParams() queryParams; // ?param1=value1 --> this.queryParams.param1
     @Method() method; // GET, POST, ...
     @Body() body; // HTTP request body content
 
@@ -49,21 +50,20 @@ class LambdaClass {
     }
 
     @Get()
-    public getRequest() { console.log("HTTP get request", this.headers); }
+    public getRequest() { this.callback(null, "HTTP get request"); }
 
     @Put()
-    public putRequest() { console.log("HTTP put request"); }
+    public putRequest() { this.callback(null, "HTTP put request"); }
 
     @Post()
-    public postRequest() { console.log("HTTP Post request"); }
+    public postRequest() { this.callback(null, "HTTP Post request"); }
 
     @Delete()
-    public deleteRequest() { console.log("HTTP Delete request"); }
+    public deleteRequest() { this.callback(null, "HTTP Delete request"); }
 }
 
 exports.handler = LambdaHandler;
-
-```
+````
 
 If you're using different Body Mapping variables, you can use the alias feature.
 
@@ -72,6 +72,33 @@ If you're using different Body Mapping variables, you can use the alias feature.
 class A {
     //...
     @QueryParams('qParams') qParams;
+    //...
+}
+//...
+```
+
+Multiple methods in a function.
+
+```typescript
+//...
+class PutAndPost {
+    //...
+    @Put()
+    @Post()
+    public putAndPostMethod() { this.callback(null, "HTTP put request"); }
+    //...
+}
+//...
+```
+
+Forward all method types to a function.
+
+```typescript
+//...
+class UsingAny {
+    // This method will be called if the method type is PUT,POST,GET, etc..
+    @Any()
+    public putAndPostMethod() { this.callback(null, "I'm a passthrough method"); }
     //...
 }
 //...

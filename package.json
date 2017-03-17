@@ -1,7 +1,7 @@
 {
   "name": "lambda-phi",
-  "version": "1.0.7",
-  "description": "Typescript framework for AWS API Gateway and Lambda (ALPHA)",
+  "version": "1.0.8",
+  "description": "Typescript framework for AWS API Gateway and Lambda",
   "main": "lambda-phi.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

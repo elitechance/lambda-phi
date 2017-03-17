@@ -61,6 +61,12 @@ export class ApiGateway {
         lambda.headMethod = method;
     }
 
+    public static addAnyMethod(target, method) {
+        LambdaManager.instance.addLambda(target);
+        let lambda = LambdaManager.instance.getLambda(target);
+        lambda.anyMethod = method;
+    }
+
     public static addHandlerMethod(target, method) {
         LambdaManager.instance.addLambda(target);
         let lambda = LambdaManager.instance.getLambda(target);
@@ -103,8 +109,27 @@ export class ApiGateway {
         lambda.pathParamsProperty = property;
     }
 
+    private static requestMethodHasDefinition(method, lambda:LambdaModel):boolean {
+        switch (method) {
+            case 'GET': return !!lambda.getMethod;
+            case 'PUT': return !!lambda.putMethod;
+            case 'POST': return !!lambda.postMethod;
+            case 'PATCH': return !!lambda.patchMethod;
+            case 'OPTIONS': return !!lambda.optionsMethod;
+            case 'HEAD': return !!lambda.headMethod;
+            case 'DELETE': return !!lambda.deleteMethod;
+        }
+        return false;
+    }
+
     public static executeHttpRequest(lambda:LambdaModel) {
         if (!lambda) { return; }
+
+
+        if (!this.requestMethodHasDefinition(ApiGateway.method, lambda)) {
+            return ApiGateway.executeAnyRequest(lambda);
+        }
+
         switch (ApiGateway.method) {
             case 'GET': ApiGateway.executeGetRequest(lambda); break;
             case 'PUT': ApiGateway.executePutRequest(lambda); break;
@@ -141,6 +166,13 @@ export class ApiGateway {
         if (!lambda) {return;}
         if (lambda.deleteMethod) {
             lambda.instance[lambda.deleteMethod]();
+        }
+    }
+
+    private static executeAnyRequest(lambda:LambdaModel) {
+        if (!lambda) {return;}
+        if (lambda.anyMethod) {
+            lambda.instance[lambda.anyMethod]();
         }
     }
 
@@ -259,6 +291,12 @@ export function Delete() {
 export function Head() {
     return function(target: Object, methodName: string) {
         ApiGateway.addHeadMethod(target, methodName);
+    }
+}
+
+export function Any() {
+    return function(target: Object, methodName: string) {
+        ApiGateway.addAnyMethod(target, methodName);
     }
 }
 

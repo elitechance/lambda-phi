@@ -36,6 +36,7 @@ export default class LambdaModel {
     private _optionsMethod;
     private _putMethod;
     private _deleteMethod;
+    private _anyMethod;
 
     get name() {
         return this._name;
@@ -164,6 +165,14 @@ export default class LambdaModel {
 
     set deleteMethod(value) {
         this._deleteMethod = value;
+    }
+
+    get anyMethod() {
+        return this._anyMethod;
+    }
+
+    set anyMethod(value) {
+        this._anyMethod = value;
     }
 
     get postConstructorMethod() {
