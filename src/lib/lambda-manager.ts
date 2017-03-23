@@ -47,6 +47,17 @@ export default class LambdaManager {
         }
     }
 
+    private setPreLambdaTimeoutMethod(lambda:LambdaModel) {
+        if (!lambda) { return; }
+        if (!lambda.preLambdaTimeoutMethod) { return; }
+        let remainingTime = this.context.getRemainingTimeInMillis();
+        let catchTime = remainingTime - lambda.preLambdaTimeoutTime;
+        if (catchTime < 0) { return; }
+        setTimeout(() => {
+            lambda.instance[lambda.preLambdaTimeoutMethod]();
+        }, remainingTime - lambda.preLambdaTimeoutTime);
+    }
+
     public processLambdas() {
         let length = this._targets.length;
         let instance;
@@ -57,6 +68,7 @@ export default class LambdaManager {
             ApiGateway.setLambdaProperties(lambda);
             this.executePostConstructor(lambda);
             this.executeHandler(lambda);
+            this.setPreLambdaTimeoutMethod(lambda);
             ApiGateway.executeHttpRequest(lambda);
         }
     }
@@ -81,6 +93,13 @@ export default class LambdaManager {
         this.addLambda(target);
         let lambda = this.getLambda(target);
         lambda.postConstructorMethod = method;
+    }
+
+    public addPreLambdaTimeoutMethod(target, method:string, miliSecondsBeforeTimeout:number) {
+        this.addLambda(target);
+        let lambda = this.getLambda(target);
+        lambda.preLambdaTimeoutMethod = method;
+        lambda.preLambdaTimeoutTime = miliSecondsBeforeTimeout;
     }
 
     public addCallbackProperty(target, property) {

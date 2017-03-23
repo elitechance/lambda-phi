@@ -29,6 +29,12 @@ export function PostConstructor() {
     }
 }
 
+export function PreLambdaTimeout(miliSecondsBeforeTimeout:number) {
+    return function(target: Object, methodName: string) {
+        lambdaManager.addPreLambdaTimeoutMethod(target, methodName, miliSecondsBeforeTimeout);
+    }
+}
+
 export function Context() {
     return function(target: Object, propertyKey: string ) {
         lambdaManager.addContextProperty(target, propertyKey);

@@ -11,6 +11,9 @@ export default class LambdaModel {
      */
     private _postConstructorMethod;
 
+    private _preLambdaTimeoutMethod:string;
+    private _preLambdaTimeoutTime:number;
+
     /**
      * Lambda Properties
      */
@@ -197,5 +200,21 @@ export default class LambdaModel {
 
     set bodyProperty(value) {
         this._bodyProperty = value;
+    }
+
+    get preLambdaTimeoutMethod(): string {
+        return this._preLambdaTimeoutMethod;
+    }
+
+    set preLambdaTimeoutMethod(value: string) {
+        this._preLambdaTimeoutMethod = value;
+    }
+
+    get preLambdaTimeoutTime(): number {
+        return this._preLambdaTimeoutTime;
+    }
+
+    set preLambdaTimeoutTime(value: number) {
+        this._preLambdaTimeoutTime = value;
     }
 }

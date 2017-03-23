@@ -2,7 +2,8 @@
  * Created by Ethan Dave B. Gomez on 2/22/17.
  */
 "use strict";
-var lambda_manager_1 = require('./lib/lambda-manager');
+Object.defineProperty(exports, "__esModule", { value: true });
+var lambda_manager_1 = require("./lib/lambda-manager");
 var api_gateway_1 = require("./lib/api-gateway");
 var lambdaManager = new lambda_manager_1.default();
 lambda_manager_1.default.instance = lambdaManager;
@@ -26,6 +27,12 @@ function PostConstructor() {
     };
 }
 exports.PostConstructor = PostConstructor;
+function PreLambdaTimeout(miliSecondsBeforeTimeout) {
+    return function (target, methodName) {
+        lambdaManager.addPreLambdaTimeoutMethod(target, methodName, miliSecondsBeforeTimeout);
+    };
+}
+exports.PreLambdaTimeout = PreLambdaTimeout;
 function Context() {
     return function (target, propertyKey) {
         lambdaManager.addContextProperty(target, propertyKey);
