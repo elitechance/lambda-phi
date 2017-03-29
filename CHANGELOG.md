@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.10
+* Support for multiple Aliases
+
 1.0.9
 * Add @PreLambdaTimeout(miliSecondsBeforeTimeout). Given the remaining time before timeout, execute a method
 

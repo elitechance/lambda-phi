@@ -198,34 +198,49 @@ export class ApiGateway {
         }
     }
 
+    private static getAliasValue(event, alias:any) {
+        if (typeof alias === 'string') {
+            return event[alias];
+        }
+        if (alias instanceof Array) {
+            let value;
+            for(let index in alias) {
+                value = event[alias[index]];
+                if (value != undefined) {
+                    return value;
+                }
+            }
+        }
+    }
+
     public static prepareHttpRequestVariables(event) {
         if (event) {
             if (ApiGateway.queryParamsAlias) {
-                ApiGateway.queryParams = event[ApiGateway.queryParamsAlias];
+                ApiGateway.queryParams = ApiGateway.getAliasValue(event, ApiGateway.queryParamsAlias);
             }
             else {
                 ApiGateway.queryParams = event.queryParams;
             }
             if (ApiGateway.pathParamsAlias) {
-                ApiGateway.pathParams = event[ApiGateway.pathParamsAlias];
+                ApiGateway.pathParams = ApiGateway.getAliasValue(event, ApiGateway.pathParamsAlias);
             }
             else {
                 ApiGateway.pathParams = event.pathParams;
             }
             if (ApiGateway.methodAlias) {
-                ApiGateway.method = event[ApiGateway.methodAlias];
+                ApiGateway.method = ApiGateway.getAliasValue(event,ApiGateway.methodAlias);
             }
             else {
                 ApiGateway.method = event.method;
             }
             if (ApiGateway.headersAlias) {
-                ApiGateway.headers = event[ApiGateway.headersAlias];
+                ApiGateway.headers = ApiGateway.getAliasValue(event, ApiGateway.headersAlias);
             }
             else {
                 ApiGateway.headers = event.headers;
             }
             if (ApiGateway.bodyAlias) {
-                ApiGateway.headers = event[ApiGateway.bodyAlias];
+                ApiGateway.body = ApiGateway.getAliasValue(event,ApiGateway.bodyAlias);
             }
             else {
                 ApiGateway.body = event.body;
@@ -304,35 +319,35 @@ export function Any() {
  * "alias" will be the alternative name defined in Body Mapping Templates
  */
 
-export function Headers(alias?:string) {
+export function Headers(alias?:any) {
     ApiGateway.headersAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addHeadersProperty(target, propertyKey);
     }
 }
 
-export function QueryParams(alias?:string) {
+export function QueryParams(alias?:any) {
     ApiGateway.queryParamsAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addQueryParamsProperty(target, propertyKey);
     }
 }
 
-export function PathParams(alias?:string) {
+export function PathParams(alias?:any) {
     ApiGateway.pathParamsAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addPathParamsProperty(target, propertyKey);
     }
 }
 
-export function Method(alias?:string) {
+export function Method(alias?:any) {
     ApiGateway.methodAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addMethodProperty(target, propertyKey);
     }
 }
 
-export function Body(alias?:string) {
+export function Body(alias?:any) {
     ApiGateway.bodyAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addBodyProperty(target, propertyKey);

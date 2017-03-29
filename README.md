@@ -85,6 +85,17 @@ class A {
 //...
 ```
 
+If you want to map it to multiple aliases
+```typescript
+//...
+class A {
+    //...
+    @PathParams(['pParams', 'pathParams', 'pathParameters']) pathParams;
+    //...
+}
+//...
+```
+
 #### Multiple methods in a function.
 
 ```typescript
