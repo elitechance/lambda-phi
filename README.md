@@ -154,4 +154,3 @@ If you want to call a method before running lambda callback() function
 
 #### Output
 `["Do this task","Do this pre callback task"]`
-
