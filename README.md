@@ -2,14 +2,15 @@
 Typescript framework for AWS API Gateway and Lambda
 
 
-Features
+### Features
 * Supports all HTTP verbs (GET, POST, PUT, DELETE, etc..) for method mapping [See Sample Convention](#sample-convention)
 * Supports body mapping [variable alias](#body-mapping-variable-alias).
 * Supports multiple HTTP verbs to a method. [See sample](#multiple-methods-in-a-function).
 * Supports catch all http verbs. [See sample](#forward-all-method-types-to-a-function).
-* Supports method call before lambda function timeout. [See sample](#prelambdatimeout-decorator)
+* Supports method call before lambda function timeout. [See sample](#prelambdatimeout)
+* Supports method call before running lambda callback(). [See sample](#prelambdacallback)
 
-This framework assumes this body mapping template in API Gateway
+This framework assumes this body mapping template in API Gateway request integration
 ```javascript
 {
   "method": "$context.httpMethod",
@@ -123,7 +124,7 @@ class UsingAny {
 //...
 ```
 
-#### PreLambdaTimeout Decorator
+#### PreLambdaTimeout
 If you want to call a method 2 seconds before your lambda function reach its timeout limit
 
 ```typescript
@@ -132,3 +133,25 @@ If you want to call a method 2 seconds before your lambda function reach its tim
         console.log("run me before timeout ", this.context.getRemainingTimeInMillis());
     }
 ```
+
+#### PreLambdaCallback
+If you want to call a method before running lambda callback() function
+
+```typescript
+    tasks:string[] = [];
+
+    @PreLambdaCallback()
+    public beforeLambdaCallback() {
+       this.tasks.push("Do this pre callback task"); 
+    }
+    
+    @Any()
+    public anyHandler() {
+        this.tasks.push("Do this task");
+        this.callback(null, this.tasks);
+    }
+```
+
+#### Output
+`["Do this task","Do this pre callback task"]`
+

@@ -13,6 +13,7 @@ export default class LambdaModel {
 
     private _preLambdaTimeoutMethod:string;
     private _preLambdaTimeoutTime:number;
+    private _preLambdaCallbackMethod:string;
 
     /**
      * Lambda Properties
@@ -217,4 +218,13 @@ export default class LambdaModel {
     set preLambdaTimeoutTime(value: number) {
         this._preLambdaTimeoutTime = value;
     }
+
+    get preLambdaCallbackMethod(): string {
+        return this._preLambdaCallbackMethod;
+    }
+
+    set preLambdaCallbackMethod(value: string) {
+        this._preLambdaCallbackMethod = value;
+    }
+
 }

@@ -33,6 +33,12 @@ function PreLambdaTimeout(miliSecondsBeforeTimeout) {
     };
 }
 exports.PreLambdaTimeout = PreLambdaTimeout;
+function PreLambdaCallback() {
+    return function (target, methodName) {
+        lambdaManager.addPreLambdaCallbackMethod(target, methodName);
+    };
+}
+exports.PreLambdaCallback = PreLambdaCallback;
 function Context() {
     return function (target, propertyKey) {
         lambdaManager.addContextProperty(target, propertyKey);

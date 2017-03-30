@@ -35,6 +35,12 @@ export function PreLambdaTimeout(miliSecondsBeforeTimeout:number) {
     }
 }
 
+export function PreLambdaCallback() {
+    return function(target: Object, methodName: string) {
+        lambdaManager.addPreLambdaCallbackMethod(target, methodName);
+    }
+}
+
 export function Context() {
     return function(target: Object, propertyKey: string ) {
         lambdaManager.addContextProperty(target, propertyKey);

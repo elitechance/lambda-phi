@@ -7,7 +7,6 @@ export default class LambdaManager {
     private _event;
     private _context;
     private _callback;
-    private _exports;
 
     private _lambdas:LambdaModel[] = [];
     private _targets:Object[] = [];
@@ -86,7 +85,7 @@ export default class LambdaManager {
     public addHandlerMethod(target, method) {
         this.addLambda(target);
         let lambda = this.getLambda(target);
-        lambda.handlerMethod= method;
+        lambda.handlerMethod = method;
     }
 
     public addPostConstructorMethod(target, method) {
@@ -100,6 +99,12 @@ export default class LambdaManager {
         let lambda = this.getLambda(target);
         lambda.preLambdaTimeoutMethod = method;
         lambda.preLambdaTimeoutTime = miliSecondsBeforeTimeout;
+    }
+
+    public addPreLambdaCallbackMethod(target, method:string) {
+        this.addLambda(target);
+        let lambda = this.getLambda(target);
+        lambda.preLambdaCallbackMethod = method;
     }
 
     public addCallbackProperty(target, property) {
@@ -120,6 +125,12 @@ export default class LambdaManager {
         lambda.contextProperty = property;
     }
 
+    private executePreLambdaCallback(lambda:LambdaModel) {
+        if (lambda.preLambdaCallbackMethod) {
+            lambda.instance[lambda.preLambdaCallbackMethod]();
+        }
+    }
+
     set event(value) {
         this._event = value;
     }
@@ -128,8 +139,14 @@ export default class LambdaManager {
         this._context = value;
     }
 
-    set callback(value) {
-        this._callback = value;
+    set callback(callbackFunction) {
+        let callbackWrapper = (error:any, message:any) => {
+            for(let lambda of this._lambdas) {
+                this.executePreLambdaCallback(lambda);
+            }
+            callbackFunction(error, message);
+        };
+        this._callback = callbackWrapper;
     }
 
     get callback() {
