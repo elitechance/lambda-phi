@@ -1,5 +1,9 @@
 # Change Log
 
+1.0.11
+* New method decorator @PreLambdaCallback
+    - method will be executed before running lambda callback() function
+
 1.0.10
 * Support for multiple Aliases
 
