@@ -3,7 +3,7 @@ Typescript framework for AWS API Gateway and Lambda
 
 
 ### Features
-* Supports all HTTP verbs (GET, POST, PUT, DELETE, etc..) for method mapping [See Sample Convention](#sample-convention)
+* Supports HTTP verbs method mapping. [See Sample Convention](#sample-convention)
 * Supports body mapping [variable alias](#body-mapping-variable-alias).
 * Supports multiple HTTP verbs to a method. [See sample](#multiple-methods-in-a-function).
 * Supports catch all http verbs. [See sample](#forward-all-method-types-to-a-function).
