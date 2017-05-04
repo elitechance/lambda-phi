@@ -9,7 +9,7 @@ var lambdaManager = new lambda_manager_1.default();
 lambda_manager_1.default.instance = lambdaManager;
 function LambdaHandler(event, context, callback) {
     lambdaManager.event = event;
-    api_gateway_1.ApiGateway.prepareHttpRequestVariables(event);
+    api_gateway_1.ApiGateway.prepareHttpRequestVariables(event, context);
     lambdaManager.context = context;
     lambdaManager.callback = callback;
     lambdaManager.processLambdas();

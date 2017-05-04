@@ -1,5 +1,9 @@
 # Change Log
 
+1.0.12
+* Bug fix on empty lambda
+* Add fallback when getting HTTP method, using context.httpMethod
+
 1.0.11
 * New method decorator @PreLambdaCallback
     - method will be executed before running lambda callback() function

@@ -1,9 +1,9 @@
 # TODOS
 
 * Support for Routes
-    - @Route( '/generic/route' )
-    - @Route( '/route/path/with/method/filter/', ['GET','POST'] )
-    - @Route( '/route/with/path/variable/{id}' )
-    - @Route( '/route/with/regex/*' )
+    - @Path( '/generic/route' )
+    - @Path( '/route/path/with/method/filter/')
+    - @Path( '/route/with/path/variable/{id}')
+    - @Path( '/route/with/regex/*' )
     
-* Trigger a method before calling _callback_ @PreCallback
+~~* Trigger a method before calling _callback_ @PreLambdaCallback~~

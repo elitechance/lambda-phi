@@ -213,7 +213,7 @@ export class ApiGateway {
         }
     }
 
-    public static prepareHttpRequestVariables(event) {
+    public static prepareHttpRequestVariables(event, context) {
         if (event) {
             if (ApiGateway.queryParamsAlias) {
                 ApiGateway.queryParams = ApiGateway.getAliasValue(event, ApiGateway.queryParamsAlias);
@@ -232,6 +232,9 @@ export class ApiGateway {
             }
             else {
                 ApiGateway.method = event.method;
+                if (!ApiGateway.method) {
+                    ApiGateway.method = context.httpMethod;
+                }
             }
             if (ApiGateway.headersAlias) {
                 ApiGateway.headers = ApiGateway.getAliasValue(event, ApiGateway.headersAlias);
@@ -249,6 +252,7 @@ export class ApiGateway {
     }
 
     public static setLambdaProperties(lambda:LambdaModel) {
+        if (!lambda) { return; }
         if (lambda.headersProperty) {
             lambda.instance[lambda.headersProperty] = ApiGateway.headers;
         }

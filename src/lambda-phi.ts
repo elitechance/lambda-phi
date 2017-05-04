@@ -10,7 +10,7 @@ LambdaManager.instance = lambdaManager;
 
 export function LambdaHandler(event, context, callback) {
     lambdaManager.event = event;
-    ApiGateway.prepareHttpRequestVariables(event);
+    ApiGateway.prepareHttpRequestVariables(event, context);
 
     lambdaManager.context = context;
     lambdaManager.callback = callback;
