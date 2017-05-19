@@ -153,8 +153,7 @@ If you want to call a method before running lambda callback() function
     }
 ```
 
-#### Output
-`["Do this task","Do this pre callback task"]`
+Output: `["Do this task","Do this pre callback task"]`
 
 #### Path Examples
 Path uses [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package for pattern matching.
