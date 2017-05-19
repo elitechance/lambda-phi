@@ -1,7 +1,7 @@
+"use strict";
 /**
  * Created by Ethan Dave B. Gomez on 2/22/17.
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var lambda_manager_1 = require("./lib/lambda-manager");
 var api_gateway_1 = require("./lib/api-gateway");
@@ -15,9 +15,9 @@ function LambdaHandler(event, context, callback) {
     lambdaManager.processLambdas();
 }
 exports.LambdaHandler = LambdaHandler;
-function Lambda() {
+function Lambda(lambdaConfig) {
     return function (target) {
-        lambdaManager.setTarget(target);
+        lambdaManager.setLambda(target, lambdaConfig);
     };
 }
 exports.Lambda = Lambda;

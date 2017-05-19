@@ -1,5 +1,11 @@
 # Change Log
 
+1.0.13
+* Support for class @Path to define base path route
+* Support for method @Path to define route pattern 
+* Support for method parameter @PathParam to define path param
+* Support for configurable parameter injection.  Allow null or default for empty object `{}`
+
 1.0.12
 * Bug fix on empty lambda
 * Add fallback when getting HTTP method, using context.httpMethod

@@ -4,6 +4,7 @@
 
 import LambdaManager from './lib/lambda-manager';
 import {ApiGateway} from "./lib/api-gateway";
+import {LambdaConfig} from "./lib/lambda-config";
 
 let lambdaManager = new LambdaManager();
 LambdaManager.instance = lambdaManager;
@@ -17,9 +18,9 @@ export function LambdaHandler(event, context, callback) {
     lambdaManager.processLambdas();
 }
 
-export function Lambda() {
+export function Lambda(lambdaConfig?:LambdaConfig) {
     return function(target:any) {
-        lambdaManager.setTarget(target);
+        lambdaManager.setLambda(target, lambdaConfig);
     }
 }
 

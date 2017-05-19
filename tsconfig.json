@@ -9,13 +9,8 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
+  "include": ["src/**/*"],
   "exclude": [
     "node_modules"
-  ],
-  "files": [
-    "src/lambda-phi.ts",
-    "src/lib/api-gateway.ts",
-    "src/lib/lambda-manager.ts",
-    "src/lib/lambda-model.ts"
   ]
 }

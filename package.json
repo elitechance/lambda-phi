@@ -1,6 +1,6 @@
 {
   "name": "lambda-phi",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Typescript framework for AWS API Gateway and Lambda",
   "main": "lambda-phi.js",
   "scripts": {
@@ -23,6 +23,10 @@
   },
   "homepage": "https://github.com/elitechance/lambda-phi#readme",
   "devDependencies": {
-    "@types/node": "^7.0.5"
+    "@types/node": "^7.0.5",
+    "@types/path-to-regexp": "^1.7.0"
+  },
+  "dependencies": {
+    "path-to-regexp": "^1.7.0"
   }
 }

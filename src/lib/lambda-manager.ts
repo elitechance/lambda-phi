@@ -1,5 +1,6 @@
 import LambdaModel from './lambda-model';
 import {ApiGateway} from "./api-gateway";
+import { LambdaConfig } from "./lambda-config";
 
 export default class LambdaManager {
     public static instance:LambdaManager;
@@ -8,28 +9,49 @@ export default class LambdaManager {
     private _context;
     private _callback;
 
-    private _lambdas:LambdaModel[] = [];
-    private _targets:Object[] = [];
+    private _lambdaModels:LambdaModel[] = [];
+    private _lambdas:Object[] = [];
 
-    public addLambda(target) {
-        let lambdaModel = this.getLambda(target);
+    public upsertLambdaModel(target):LambdaModel {
+        let lambdaModel = this.getLambdaByName(target.constructor.name);
         if (lambdaModel == null) {
             let instance = new target.constructor();
             lambdaModel = new LambdaModel();
             lambdaModel.name = instance.constructor.name;
             lambdaModel.instance = instance;
-            this._lambdas.push(lambdaModel);
+            this._lambdaModels.push(lambdaModel);
+        }
+        return lambdaModel;
+    }
+
+    public setLambda(target, lambdaConfig:LambdaConfig) {
+        target.__path = '';
+        target.__lambdaConfig = lambdaConfig;
+        if (this._lambdas.indexOf(target) === -1) {
+            this._lambdas.push(target);
         }
     }
 
-    public setTarget(target) {
-        this._targets.push(target);
+    public setLambdaPath(target, path) {
+        target.__path = path;
+        if (this._lambdas.indexOf(target) == -1) {
+            this._lambdas.push(target);
+        }
+    }
+
+    private getEvent(lambda:LambdaModel) {
+        if (lambda.config && !lambda.config.allowNullInjection) {
+            if (!this.event) {
+                return {};
+            }
+        }
+        return this.event;
     }
 
     private setLambdaProperties(lambda:LambdaModel) {
         if (lambda) {
             if (lambda.callbackProperty) { lambda.instance[lambda.callbackProperty] = this.callback; }
-            if (lambda.eventProperty) { lambda.instance[lambda.eventProperty] = this.event; }
+            if (lambda.eventProperty) { lambda.instance[lambda.eventProperty] = this.getEvent(lambda); }
             if (lambda.contextProperty) { lambda.instance[lambda.contextProperty] = this.context; }
         }
     }
@@ -58,70 +80,71 @@ export default class LambdaManager {
     }
 
     public processLambdas() {
-        let length = this._targets.length;
-        let instance;
+        let length = this._lambdas.length;
+        let hasPath:boolean;
+        let target;
+        let lambda;
+
         for (let i = 0; i < length;i++) {
-            instance = new this._targets[i]();
-            let lambda = this.getLambda(instance);
+            target = this._lambdas[i];
+            lambda = this.getLambdaByName(target.name);
+            lambda.basePath = target.__path;
+            lambda.config = target.__lambdaConfig;
             this.setLambdaProperties(lambda);
             ApiGateway.setLambdaProperties(lambda);
             this.executePostConstructor(lambda);
             this.executeHandler(lambda);
             this.setPreLambdaTimeoutMethod(lambda);
-            ApiGateway.executeHttpRequest(lambda);
+            hasPath = ApiGateway.executePath(lambda);
+            if (!hasPath) {
+                ApiGateway.executeHttpRequest(lambda);
+            }
         }
     }
 
-    public getLambda(target):LambdaModel {
-        let length = this._lambdas.length;
+    public getLambdaByName(name:string):LambdaModel {
+        let length = this._lambdaModels.length;
         for (let i = 0; i < length;i++) {
-            if (this._lambdas[i].name == target.constructor.name) {
-                return this._lambdas[i];
+            if (this._lambdaModels[i].name == name) {
+                return this._lambdaModels[i];
             }
         }
         return null;
     }
 
     public addHandlerMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.handlerMethod = method;
     }
 
     public addPostConstructorMethod(target, method) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.postConstructorMethod = method;
     }
 
     public addPreLambdaTimeoutMethod(target, method:string, miliSecondsBeforeTimeout:number) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.preLambdaTimeoutMethod = method;
         lambda.preLambdaTimeoutTime = miliSecondsBeforeTimeout;
     }
 
     public addPreLambdaCallbackMethod(target, method:string) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.preLambdaCallbackMethod = method;
     }
 
     public addCallbackProperty(target, property) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.callbackProperty = property;
     }
 
     public addEventProperty(target, property) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.eventProperty = property;
     }
 
     public addContextProperty(target, property) {
-        this.addLambda(target);
-        let lambda = this.getLambda(target);
+        let lambda = this.upsertLambdaModel(target);
         lambda.contextProperty = property;
     }
 
@@ -141,7 +164,7 @@ export default class LambdaManager {
 
     set callback(callbackFunction) {
         let callbackWrapper = (error:any, message:any) => {
-            for(let lambda of this._lambdas) {
+            for(let lambda of this._lambdaModels) {
                 this.executePreLambdaCallback(lambda);
             }
             callbackFunction(error, message);
