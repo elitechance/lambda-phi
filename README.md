@@ -9,7 +9,7 @@ Typescript framework for AWS API Gateway and Lambda
 * Supports catch all http verbs. [See sample](#forward-all-method-types-to-a-function).
 * Supports method call before lambda function timeout. [See sample](#prelambdatimeout)
 * Supports method call before running lambda callback(). [See sample](#prelambdacallback)
-* Supports route mapping and path parameter parsing. [See sample](#path)
+* Supports route mapping and path parameter parsing. [See sample](#path-examples)
 
 This framework assumes this body mapping template in API Gateway request integration
 ```javascript
@@ -156,7 +156,7 @@ If you want to call a method before running lambda callback() function
 #### Output
 `["Do this task","Do this pre callback task"]`
 
-#### Path
+#### Path Examples
 Path uses [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package for pattern matching.
 
 In this example, `myPath()` will be triggered if the request path is `/my/path`
