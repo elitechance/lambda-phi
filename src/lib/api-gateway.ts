@@ -268,11 +268,13 @@ export class ApiGateway {
     public static executePath(lambda:LambdaModel):boolean {
         let pattern;
         let pathToRegEx;
+        let success;
         for(let path of lambda.paths) {
             pattern = lambda.basePath + path.pattern;
             pathToRegEx = PathToRegex(pattern);
             if (pathToRegEx.test(ApiGateway.context.resourcePath)) {
-                return ApiGateway.executePathLambdaMethod(pathToRegEx, lambda, path);
+               success = ApiGateway.executePathLambdaMethod(pathToRegEx, lambda, path);
+               if (success) { return true; }
             }
         }
         return false;
@@ -414,6 +416,10 @@ export function Body(alias?:any) {
 
 export function Path(pattern:string) {
     return function(target: Object, propertyKey: string ) {
+        /*
+         * We're managing two types of signature using one decorator name
+         * If target is an object, @Path is a method decorator, otherwise is a class decorator
+         */
         if (typeof target === 'object') {
             ApiGateway.addPathMethod(pattern, target, propertyKey);
         }
