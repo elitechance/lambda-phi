@@ -21,6 +21,8 @@ export class ApiGateway {
     private static headers;
     private static body;
 
+    private static pathConfig:any;
+
     public static queryParamsAlias;
     public static pathParamsAlias;
     public static methodAlias;
@@ -113,6 +115,10 @@ export class ApiGateway {
         return false;
     }
 
+    public static setPathConfig(config:any) {
+        ApiGateway.pathConfig = config;
+    }
+
     public static executeHttpRequest(lambda:LambdaModel) {
         if (!lambda) { return; }
         let methods = ApiGateway.getHttpVerbMethods(lambda);
@@ -132,25 +138,30 @@ export class ApiGateway {
         }
     }
 
-    private static getEventValue(event, name:string) {
+    private static getObjectValue(object:any, name:string) {
         let info = name.split('.');
         // Ugly hack I know.
-        if (info.length == 1) { return event[name]; }
-        if (info.length == 2) { return event[info[0]][info[1]]; }
-        if (info.length == 3) { return event[info[0]][info[1]][info[2]]; }
-        if (info.length == 4) { return event[info[0]][info[1]][info[2]][info[3]]; }
-        if (info.length == 5) { return event[info[0]][info[1]][info[2]][info[3]][info[4]]; }
-        if (info.length == 6) { return event[info[0]][info[1]][info[2]][info[3]][info[4]][info[5]]; }
+        try {
+            if (info.length == 1) { return object[name]; }
+            if (info.length == 2) { return object[info[0]][info[1]]; }
+            if (info.length == 3) { return object[info[0]][info[1]][info[2]]; }
+            if (info.length == 4) { return object[info[0]][info[1]][info[2]][info[3]]; }
+            if (info.length == 5) { return object[info[0]][info[1]][info[2]][info[3]][info[4]]; }
+            if (info.length == 6) { return object[info[0]][info[1]][info[2]][info[3]][info[4]][info[5]]; }
+        }
+        catch (error) {
+            return "";
+        }
     }
 
     private static getAliasValue(event, alias:any) {
         if (typeof alias === 'string') {
-            return this.getEventValue(event, alias);
+            return this.getObjectValue(event, alias);
         }
         if (alias instanceof Array) {
             let value;
             for(let index in alias) {
-                value = this.getEventValue(event, alias[index]);
+                value = this.getObjectValue(event, alias[index]);
                 if (value != undefined) {
                     return value;
                 }
@@ -258,8 +269,19 @@ export class ApiGateway {
         return args;
     }
 
+    private static getResourcePath() {
+        if (ApiGateway.pathConfig) {
+            return this.getObjectValue(ApiGateway.event, ApiGateway.pathConfig.resourcePathVariable);
+        }
+        let resourcePath = this.getObjectValue(ApiGateway.event, 'context.resource-path');
+        if (!resourcePath) {
+            resourcePath = this.getObjectValue(ApiGateway.event, 'path');
+        }
+        return resourcePath;
+    }
+
     private static executePathLambdaMethod(pathToRegEx, lambda:LambdaModel, path:PathModel):boolean {
-        let keys = pathToRegEx.exec(ApiGateway.context.resourcePath);
+        let keys = pathToRegEx.exec(this.getResourcePath());
         let args = ApiGateway.getArgs(keys, pathToRegEx, lambda, path);
         let verbs = ApiGateway.getHttpVerbsByMethodName(lambda, path.methodName);
         if (verbs.length) {
@@ -283,7 +305,7 @@ export class ApiGateway {
         for(let path of lambda.paths) {
             pattern = lambda.basePath + path.pattern;
             pathToRegEx = PathToRegex(pattern);
-            if (pathToRegEx.test(ApiGateway.context.resourcePath)) {
+            if (pathToRegEx.test(this.getResourcePath())) {
                success = ApiGateway.executePathLambdaMethod(pathToRegEx, lambda, path);
                if (success) { return true; }
             }
@@ -440,6 +462,11 @@ export function Path(pattern:string) {
     }
 }
 
+export function PathConfig(config:any) {
+    ApiGateway.setPathConfig(config);
+    return function(target:any) {
+    }
+}
 export function PathParam(name:string) {
     return function(target: Object, propertyKey: string, index:number ) {
         ApiGateway.addPathParam(name, target, propertyKey, index);

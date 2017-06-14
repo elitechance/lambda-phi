@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.16
+* Add default resource path
+
 1.0.15
 * Support for deeper variable access in name alias like @Method('context.http-method')
 * Fix README.md to use javascript syntax in code template

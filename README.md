@@ -167,7 +167,7 @@ If you want to call a method before running lambda callback() function
 Output: `["Do this task","Do this pre callback task"]`
 
 #### Path Examples
-Path uses [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package for pattern matching.
+Path uses [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package for pattern matching.  The default resource path is parse from event.context['resource-path']
 
 In this example, `myPath()` will be triggered if the request path is `/my/path`
 ```javascript
@@ -194,6 +194,20 @@ class WithBasePath {
     public myPath2() {
         this.callback(null, "this matches /v1/my/path2 request");
     }
+}
+```
+
+Configure a different resource path variable.  This will target event.context['resource-path']
+```javascript
+@PathConfig({resourcePathVariable: 'context.resource-path'})
+@Lambda()
+class WithBasePath {
+    
+    @Path('/sample/path')
+    public samplePath() {
+        this.callback(null, "this matches /sample/path request");
+    }
+    
 }
 ```
 
