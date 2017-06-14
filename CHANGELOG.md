@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.17
+* Handle better fallback on resource path
+
 1.0.16
 * Add default resource path
 

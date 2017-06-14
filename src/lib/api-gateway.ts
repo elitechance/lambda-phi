@@ -270,10 +270,13 @@ export class ApiGateway {
     }
 
     private static getResourcePath() {
+        let resourcePath;
         if (ApiGateway.pathConfig) {
-            return this.getObjectValue(ApiGateway.event, ApiGateway.pathConfig.resourcePathVariable);
+            resourcePath = this.getObjectValue(ApiGateway.event, ApiGateway.pathConfig.resourcePathVariable);
         }
-        let resourcePath = this.getObjectValue(ApiGateway.event, 'context.resource-path');
+        if (!resourcePath) {
+            resourcePath = this.getObjectValue(ApiGateway.event, 'context.resource-path');
+        }
         if (!resourcePath) {
             resourcePath = this.getObjectValue(ApiGateway.event, 'path');
         }
