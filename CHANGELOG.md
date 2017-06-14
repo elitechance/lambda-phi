@@ -1,5 +1,9 @@
 # Change Log
 
+1.0.15
+* Support for deeper variable access in name alias like @Method('context.http-method')
+* Fix README.md to use javascript syntax in code template
+
 1.0.13
 * Support for class @Path to define base path route
 * Support for method @Path to define route pattern 

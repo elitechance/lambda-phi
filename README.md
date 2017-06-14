@@ -38,7 +38,7 @@ This framework assumes this body mapping template in API Gateway request integra
 ```
 
 #### Sample Convention
-```typescript
+```javascript
 import { LambdaHandler, Lambda, Event, Context, Callback, PostConstructor } from 'lambda-phi';
 import { Get, Put, Post, Delete, Headers, PathParams, QueryParams, Method, Body } from 'lambda-phi/lib/api-gateway';
 
@@ -77,7 +77,7 @@ exports.handler = LambdaHandler;
 #### Body mapping variable alias
 If you're using different Body Mapping variables, you can use the alias feature.
 
-```typescript
+```javascript
 //...
 class A {
     //...
@@ -88,7 +88,7 @@ class A {
 ```
 
 If you want to map it to multiple aliases
-```typescript
+```javascript
 //...
 class A {
     //...
@@ -98,9 +98,20 @@ class A {
 //...
 ```
 
+If you want to map it to a deeper variable, like event.context['http-method'].
+```javascript
+//...
+class A {
+    //...
+    @Method('context.http-method') method;
+    //...
+}
+//...
+```
+
 #### Multiple methods in a function.
 
-```typescript
+```javascript
 //...
 class PutAndPost {
     //...
@@ -114,7 +125,7 @@ class PutAndPost {
 
 #### Forward all method types to a function.
 
-```typescript
+```javascript
 //...
 class UsingAny {
     // This method will be called if the method type is PUT,POST,GET, etc..
@@ -128,7 +139,7 @@ class UsingAny {
 #### PreLambdaTimeout
 If you want to call a method 2 seconds before your lambda function reach its timeout limit
 
-```typescript
+```javascript
     @PreLambdaTimeout(2000)
     public beforeLambdaTimeout() {
         console.log("run me before timeout ", this.context.getRemainingTimeInMillis());
@@ -138,7 +149,7 @@ If you want to call a method 2 seconds before your lambda function reach its tim
 #### PreLambdaCallback
 If you want to call a method before running lambda callback() function
 
-```typescript
+```javascript
     tasks:string[] = [];
 
     @PreLambdaCallback()
@@ -159,7 +170,7 @@ Output: `["Do this task","Do this pre callback task"]`
 Path uses [path-to-regexp](https://www.npmjs.com/package/path-to-regexp) package for pattern matching.
 
 In this example, `myPath()` will be triggered if the request path is `/my/path`
-```typescript
+```javascript
 
     @Path('/my/path')
     public myPath() {
@@ -169,7 +180,7 @@ In this example, `myPath()` will be triggered if the request path is `/my/path`
 ```
 
 Setting default base path.
-```typescript
+```javascript
 @Path('/v1')
 @Lambda()
 class WithBasePath {
@@ -187,7 +198,7 @@ class WithBasePath {
 ```
 
 Defining route with path parameter support.
-```typescript
+```javascript
     @Path('/book/:id')
     public book(@PathParam('id') bookId) {
         this.callback(null, "I got bookId: "+bookId);
@@ -200,7 +211,7 @@ Defining route with path parameter support.
 ```
 
 Defining route with HTTP filter
-```typescript
+```javascript
     @Path('/allow/get/and/post')
     @Post()
     @Get()

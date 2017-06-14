@@ -132,14 +132,25 @@ export class ApiGateway {
         }
     }
 
+    private static getEventValue(event, name:string) {
+        let info = name.split('.');
+        // Ugly hack I know.
+        if (info.length == 1) { return event[name]; }
+        if (info.length == 2) { return event[info[0]][info[1]]; }
+        if (info.length == 3) { return event[info[0]][info[1]][info[2]]; }
+        if (info.length == 4) { return event[info[0]][info[1]][info[2]][info[3]]; }
+        if (info.length == 5) { return event[info[0]][info[1]][info[2]][info[3]][info[4]]; }
+        if (info.length == 6) { return event[info[0]][info[1]][info[2]][info[3]][info[4]][info[5]]; }
+    }
+
     private static getAliasValue(event, alias:any) {
         if (typeof alias === 'string') {
-            return event[alias];
+            return this.getEventValue(event, alias);
         }
         if (alias instanceof Array) {
             let value;
             for(let index in alias) {
-                value = event[alias[index]];
+                value = this.getEventValue(event, alias[index]);
                 if (value != undefined) {
                     return value;
                 }
