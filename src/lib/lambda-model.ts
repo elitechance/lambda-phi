@@ -29,6 +29,7 @@ export default class LambdaModel {
      * Lambda Properties
      */
     private _eventProperty;
+    private _eventContextProperty;
     private _callbackProperty;
     private _contextProperty;
     private _handlerMethod;
@@ -69,6 +70,14 @@ export default class LambdaModel {
 
     set eventProperty(value) {
         this._eventProperty = value;
+    }
+
+    get eventContextProperty() {
+        return this._eventContextProperty;
+    }
+
+    set eventContextProperty(value) {
+        this._eventContextProperty = value;
     }
 
     get handlerMethod() {

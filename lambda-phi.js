@@ -57,3 +57,9 @@ function Event() {
     };
 }
 exports.Event = Event;
+function EventContext() {
+    return function (target, propertyKey) {
+        lambdaManager.addEventContextProperty(target, propertyKey);
+    };
+}
+exports.EventContext = EventContext;

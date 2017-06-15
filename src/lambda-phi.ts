@@ -59,3 +59,9 @@ export function Event() {
         lambdaManager.addEventProperty(target, propertyKey);
     }
 }
+
+export function EventContext() {
+    return function(target: Object, propertyKey: string ) {
+        lambdaManager.addEventContextProperty(target, propertyKey);
+    }
+}

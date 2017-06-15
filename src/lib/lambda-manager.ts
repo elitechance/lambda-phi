@@ -48,10 +48,17 @@ export default class LambdaManager {
         return this.event;
     }
 
+    private getEventContext() {
+        if (this.event.context) { return this.event.context; }
+        if (this.event.requestContext) { return this.event.requestContext; }
+        return null;
+    }
+
     private setLambdaProperties(lambda:LambdaModel) {
         if (lambda) {
             if (lambda.callbackProperty) { lambda.instance[lambda.callbackProperty] = this.callback; }
             if (lambda.eventProperty) { lambda.instance[lambda.eventProperty] = this.getEvent(lambda); }
+            if (lambda.eventContextProperty) { lambda.instance[lambda.eventContextProperty] = this.getEventContext(); }
             if (lambda.contextProperty) { lambda.instance[lambda.contextProperty] = this.context; }
         }
     }
@@ -141,6 +148,11 @@ export default class LambdaManager {
     public addEventProperty(target, property) {
         let lambda = this.upsertLambdaModel(target);
         lambda.eventProperty = property;
+    }
+
+    public addEventContextProperty(target, property) {
+        let lambda = this.upsertLambdaModel(target);
+        lambda.eventContextProperty = property;
     }
 
     public addContextProperty(target, property) {

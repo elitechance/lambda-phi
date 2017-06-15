@@ -1,6 +1,7 @@
 # Change Log
 1.0.21
 * Support for stage variables inject
+* Support for event context using @EventContext decorator
 
 1.0.20
 * Add fallback for method inject
