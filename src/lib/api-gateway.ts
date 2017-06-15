@@ -173,8 +173,16 @@ export class ApiGateway {
         if (ApiGateway.queryParamsAlias) {
             ApiGateway.queryParams = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.queryParamsAlias);
         }
-        else {
+        if (!ApiGateway.queryParamsAlias) {
             ApiGateway.queryParams = ApiGateway.event.queryParams;
+        }
+        if (!ApiGateway.queryParamsAlias) {
+            ApiGateway.queryParams = ApiGateway.event.queryStringParameters;
+        }
+        if (!ApiGateway.queryParamsAlias) {
+            if (ApiGateway.event.params) {
+                ApiGateway.pathParams = ApiGateway.event.params.querystring;
+            }
         }
     }
 
@@ -182,19 +190,32 @@ export class ApiGateway {
         if (ApiGateway.pathParamsAlias) {
             ApiGateway.pathParams = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.pathParamsAlias);
         }
-        else {
-            ApiGateway.pathParams = ApiGateway.event.queryParams;
+        if (!ApiGateway.pathParams) {
+            ApiGateway.pathParams = ApiGateway.event.pathParams;
+        }
+        if (!ApiGateway.pathParams) {
+            ApiGateway.pathParams = ApiGateway.event.pathParameters;
+        }
+        if (!ApiGateway.pathParams) {
+            if (ApiGateway.event.params) {
+                ApiGateway.pathParams = ApiGateway.event.params.path;
+            }
         }
     }
 
     private static setMethod() {
         if (ApiGateway.methodAlias) {
-            ApiGateway.method = ApiGateway.getAliasValue(ApiGateway.event,ApiGateway.methodAlias);
+            ApiGateway.method = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.methodAlias);
         }
-        else {
+        if (!ApiGateway.method) {
             ApiGateway.method = ApiGateway.event.method;
-            if (!ApiGateway.method) {
-                ApiGateway.method = ApiGateway.context.httpMethod;
+        }
+        if (!ApiGateway.method) {
+            ApiGateway.method = ApiGateway.event.httpMethod;
+        }
+        if (!ApiGateway.method) {
+            if (ApiGateway.event.context) {
+                ApiGateway.method = ApiGateway.event.context['http-method'];
             }
         }
 
@@ -204,8 +225,13 @@ export class ApiGateway {
         if (ApiGateway.headersAlias) {
             ApiGateway.headers = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.headersAlias);
         }
-        else {
+        if (!ApiGateway.headers) {
             ApiGateway.headers = ApiGateway.event.headers;
+        }
+        if (!ApiGateway.headers) {
+            if (ApiGateway.event.params) {
+                ApiGateway.headers = ApiGateway.event.params.header;
+            }
         }
     }
 
@@ -213,8 +239,11 @@ export class ApiGateway {
         if (ApiGateway.bodyAlias) {
             ApiGateway.body = ApiGateway.getAliasValue(ApiGateway.event,ApiGateway.bodyAlias);
         }
-        else {
+        if (!ApiGateway.body) {
             ApiGateway.body = ApiGateway.event.body;
+        }
+        if (!ApiGateway.body) {
+            ApiGateway.body = ApiGateway.event['body-json'];
         }
     }
 
@@ -228,9 +257,6 @@ export class ApiGateway {
             ApiGateway.setMethod();
             ApiGateway.setHeaders();
             ApiGateway.setBody();
-        }
-        else {
-            ApiGateway.method = context.httpMethod;
         }
     }
 

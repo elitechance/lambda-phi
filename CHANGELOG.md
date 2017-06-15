@@ -1,5 +1,12 @@
 # Change Log
 
+1.0.20
+* Add fallback for method inject
+* Add fallback for body inject
+* Add fallback for queryParams inject
+* Add fallback for pathParams inject
+* Add fallback for headers inject
+
 1.0.19
 * Fix package.json to apply .d.ts path
 
