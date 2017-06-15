@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.19
+* Fix package.json to apply .d.ts path
+
 1.0.18
 * Publishing types
 
