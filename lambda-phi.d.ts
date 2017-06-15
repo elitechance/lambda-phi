@@ -1,3 +1,9 @@
+// Type definitions for lambda-phi 1.0.19
+// Project: https://github.com/elitechance/lambda-phi
+// Definitions by: Ethan Dave B. Gomez <https://github.com/elitechance>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
+
 declare module 'lambda-phi/lib/path-model' {
 	/**
 	 * Created by EGomez on 5/4/17.
