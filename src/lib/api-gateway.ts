@@ -20,6 +20,7 @@ export class ApiGateway {
     private static method;
     private static headers;
     private static body;
+    private static stageVariables;
 
     private static pathConfig:any;
 
@@ -28,6 +29,7 @@ export class ApiGateway {
     public static methodAlias;
     public static headersAlias;
     public static bodyAlias;
+    public static stageVariablesAlias;
 
     public static addHttpVerbMethod(name:string, target, methodName) {
         let lambda = LambdaManager.instance.upsertLambdaModel(target);
@@ -89,6 +91,11 @@ export class ApiGateway {
     public static addBodyProperty(target, property) {
         let lambda = LambdaManager.instance.upsertLambdaModel(target);
         lambda.bodyProperty = property;
+    }
+
+    public static addStageVariablesProperty(target, property) {
+        let lambda = LambdaManager.instance.upsertLambdaModel(target);
+        lambda.stageVariablesProperty = property;
     }
 
     public static addPathParamsProperty(target, property) {
@@ -237,13 +244,25 @@ export class ApiGateway {
 
     private static setBody() {
         if (ApiGateway.bodyAlias) {
-            ApiGateway.body = ApiGateway.getAliasValue(ApiGateway.event,ApiGateway.bodyAlias);
+            ApiGateway.body = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.bodyAlias);
         }
         if (!ApiGateway.body) {
             ApiGateway.body = ApiGateway.event.body;
         }
         if (!ApiGateway.body) {
             ApiGateway.body = ApiGateway.event['body-json'];
+        }
+    }
+
+    private static setStageVariables() {
+        if (ApiGateway.stageVariablesAlias) {
+            ApiGateway.stageVariables = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.stageVariablesAlias);
+        }
+        if (!ApiGateway.stageVariables) {
+            ApiGateway.stageVariables = ApiGateway.event.stageVariables;
+        }
+        if (!ApiGateway.stageVariables) {
+            ApiGateway.stageVariables = ApiGateway.event['stage-variables'];
         }
     }
 
@@ -257,6 +276,7 @@ export class ApiGateway {
             ApiGateway.setMethod();
             ApiGateway.setHeaders();
             ApiGateway.setBody();
+            ApiGateway.setStageVariables();
         }
     }
 
@@ -386,6 +406,9 @@ export class ApiGateway {
         if (lambda.bodyProperty) {
             lambda.instance[lambda.bodyProperty] = ApiGateway.body;
         }
+        if (lambda.stageVariablesProperty) {
+            lambda.instance[lambda.stageVariablesProperty] = ApiGateway.stageVariables;
+        }
     }
 }
 
@@ -473,6 +496,13 @@ export function Body(alias?:any) {
     ApiGateway.bodyAlias = alias;
     return function(target: Object, propertyKey: string ) {
         ApiGateway.addBodyProperty(target, propertyKey);
+    }
+}
+
+export function StageVariables(alias?:any) {
+    ApiGateway.stageVariablesAlias = alias;
+    return function(target: Object, propertyKey: string ) {
+        ApiGateway.addStageVariablesProperty(target, propertyKey);
     }
 }
 

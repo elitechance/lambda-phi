@@ -42,6 +42,7 @@ export default class LambdaModel {
     private _headersProperty;
     private _bodyProperty;
     private _methodProperty;
+    private _stageVariablesProperty;
 
     private _anyMethod;
 
@@ -212,6 +213,14 @@ export default class LambdaModel {
 
     set config(value: LambdaConfig) {
         this._config = value;
+    }
+
+    get stageVariablesProperty() {
+        return this._stageVariablesProperty;
+    }
+
+    set stageVariablesProperty(value) {
+        this._stageVariablesProperty = value;
     }
 
 }

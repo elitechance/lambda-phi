@@ -1,4 +1,6 @@
 # Change Log
+1.0.21
+* Support for stage variables inject
 
 1.0.20
 * Add fallback for method inject
