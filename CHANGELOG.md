@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.18
+* Publishing types
+
 1.0.17
 * Handle better fallback on resource path
 
