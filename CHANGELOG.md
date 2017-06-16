@@ -1,4 +1,8 @@
 # Change Log
+
+1.0.22
+* Add fallback document to README.md
+
 1.0.21
 * Support for stage variables inject
 * Support for event context using @EventContext decorator

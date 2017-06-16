@@ -4,38 +4,13 @@ Typescript framework for AWS API Gateway and Lambda
 
 ### Features
 * Supports HTTP verbs method mapping. [See Sample Convention](#sample-convention)
+* Supports event inject fallback. [See Sample](#event-inject-fallback)
 * Supports body mapping [variable alias](#body-mapping-variable-alias).
 * Supports multiple HTTP verbs to a method. [See sample](#multiple-methods-in-a-function).
 * Supports catch all http verbs. [See sample](#forward-all-method-types-to-a-function).
 * Supports method call before lambda function timeout. [See sample](#prelambdatimeout)
 * Supports method call before running lambda callback(). [See sample](#prelambdacallback)
 * Supports route mapping and path parameter parsing. [See sample](#path-examples)
-
-This framework assumes this body mapping template in API Gateway request integration
-```javascript
-{
-  "method": "$context.httpMethod",
-  "body" : $input.json('$'),
-  "headers": {
-    #foreach($param in $input.params().header.keySet())
-    "$param": "$util.escapeJavaScript($input.params().header.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "queryParams": {
-    #foreach($param in $input.params().querystring.keySet())
-    "$param": "$util.escapeJavaScript($input.params().querystring.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  },
-  "pathParams": {
-    #foreach($param in $input.params().path.keySet())
-    "$param": "$util.escapeJavaScript($input.params().path.get($param))" #if($foreach.hasNext),#end
-
-    #end
-  }  
-}
-```
 
 #### Sample Convention
 ```javascript
@@ -73,6 +48,34 @@ class LambdaClass {
 
 exports.handler = LambdaHandler;
 ````
+
+#### Event inject fallback
+This framework adds fallback to common `event` mapping fields, specially if you're using default passthrough or proxy template
+
+##### @Body()
+  * event.body
+  * event['body-json']
+##### @Header()
+  * event.headers
+  * event.params.header
+##### @Method()
+  * event.method
+  * event.httpMethod
+  * event.context['http-method']
+##### @PathParams()
+  * event.pathParams
+  * event.pathParameters
+  * event.params.path
+##### @QueryParams()
+  * event.queryParams
+  * event.queryStringParameters
+  * event.params.querystring
+##### @StageVariables()
+  * event.stageVariables
+  * event['stage-variables]
+##### @EventContext()
+  * event.context
+  * event.requestContext
 
 #### Body mapping variable alias
 If you're using different Body Mapping variables, you can use the alias feature.
