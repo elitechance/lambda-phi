@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.23
+* Fix method check
+
 1.0.22
 * Add fallback document to README.md
 

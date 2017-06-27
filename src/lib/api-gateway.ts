@@ -334,7 +334,7 @@ export class ApiGateway {
         let args = ApiGateway.getArgs(keys, pathToRegEx, lambda, path);
         let verbs = ApiGateway.getHttpVerbsByMethodName(lambda, path.methodName);
         if (verbs.length) {
-            let verbExists = ApiGateway.verbExists(verbs, ApiGateway.context.httpMethod);
+            let verbExists = ApiGateway.verbExists(verbs, ApiGateway.method);
             if (verbExists) {
                 lambda.instance[path.methodName].apply(lambda.instance, args);
                 return true;
