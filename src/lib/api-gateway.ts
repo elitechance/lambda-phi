@@ -12,15 +12,15 @@ import HttpVerbModel from "./http-verb-model";
 
 export class ApiGateway {
 
-    private static event = null;
-    private static context = null;
+    private event = null;
+    private context = null;
 
-    private static queryParams;
-    private static pathParams;
-    private static method;
-    private static headers;
-    private static body;
-    private static stageVariables;
+    private queryParams = null;
+    private pathParams = null;
+    private method = null;
+    private headers = null;
+    private body = null;
+    private stageVariables = null;
 
     private static pathConfig:any;
 
@@ -103,10 +103,10 @@ export class ApiGateway {
         lambda.pathParamsProperty = property;
     }
 
-    private static getHttpVerbMethods(lambda:LambdaModel):string[] {
+    private static getHttpVerbMethods(lambda:LambdaModel, method):string[] {
         let methods = [];
         for(let verb of lambda.httpVerbs) {
-            if (verb.name === ApiGateway.method) {
+            if (verb.name === method) {
                 methods.push(verb.methodName);
             }
         }
@@ -126,9 +126,9 @@ export class ApiGateway {
         ApiGateway.pathConfig = config;
     }
 
-    public static executeHttpRequest(lambda:LambdaModel) {
+    public executeHttpRequest(lambda:LambdaModel) {
         if (!lambda) { return; }
-        let methods = ApiGateway.getHttpVerbMethods(lambda);
+        let methods = ApiGateway.getHttpVerbMethods(lambda, this.method);
         for (let method of methods) {
             if (!ApiGateway.methodHasPath(lambda, method)) {
                 lambda.instance[method]();
@@ -145,7 +145,7 @@ export class ApiGateway {
         }
     }
 
-    private static getObjectValue(object:any, name:string) {
+    private getObjectValue(object:any, name:string) {
         let info = name.split('.');
         // Ugly hack I know.
         try {
@@ -161,7 +161,7 @@ export class ApiGateway {
         }
     }
 
-    private static getAliasValue(event, alias:any) {
+    private getAliasValue(event, alias:any) {
         if (typeof alias === 'string') {
             return this.getObjectValue(event, alias);
         }
@@ -176,117 +176,117 @@ export class ApiGateway {
         }
     }
 
-    private static setQueryParams() {
+    private setQueryParams() {
         if (ApiGateway.queryParamsAlias) {
-            ApiGateway.queryParams = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.queryParamsAlias);
+            this.queryParams = this.getAliasValue(this.event, ApiGateway.queryParamsAlias);
         }
         if (!ApiGateway.queryParamsAlias) {
-            ApiGateway.queryParams = ApiGateway.event.queryParams;
+            this.queryParams = this.event.queryParams;
         }
         if (!ApiGateway.queryParamsAlias) {
-            ApiGateway.queryParams = ApiGateway.event.queryStringParameters;
+            this.queryParams = this.event.queryStringParameters;
         }
         if (!ApiGateway.queryParamsAlias) {
-            if (ApiGateway.event.params) {
-                ApiGateway.pathParams = ApiGateway.event.params.querystring;
+            if (this.event.params) {
+                this.pathParams = this.event.params.querystring;
             }
         }
     }
 
-    private static setPathParams() {
+    private setPathParams() {
         if (ApiGateway.pathParamsAlias) {
-            ApiGateway.pathParams = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.pathParamsAlias);
+            this.pathParams = this.getAliasValue(this.event, ApiGateway.pathParamsAlias);
         }
-        if (!ApiGateway.pathParams) {
-            ApiGateway.pathParams = ApiGateway.event.pathParams;
+        if (!this.pathParams) {
+            this.pathParams = this.event.pathParams;
         }
-        if (!ApiGateway.pathParams) {
-            ApiGateway.pathParams = ApiGateway.event.pathParameters;
+        if (!this.pathParams) {
+            this.pathParams = this.event.pathParameters;
         }
-        if (!ApiGateway.pathParams) {
-            if (ApiGateway.event.params) {
-                ApiGateway.pathParams = ApiGateway.event.params.path;
+        if (!this.pathParams) {
+            if (this.event.params) {
+                this.pathParams = this.event.params.path;
             }
         }
     }
 
-    private static setMethod() {
+    private setMethod() {
         if (ApiGateway.methodAlias) {
-            ApiGateway.method = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.methodAlias);
+            this.method = this.getAliasValue(this.event, ApiGateway.methodAlias);
         }
-        if (!ApiGateway.method) {
-            ApiGateway.method = ApiGateway.event.method;
+        if (!this.method) {
+            this.method = this.event.method;
         }
-        if (!ApiGateway.method) {
-            ApiGateway.method = ApiGateway.event.httpMethod;
+        if (!this.method) {
+            this.method = this.event.httpMethod;
         }
-        if (!ApiGateway.method) {
-            if (ApiGateway.event.context) {
-                ApiGateway.method = ApiGateway.event.context['http-method'];
+        if (!this.method) {
+            if (this.event.context) {
+                this.method = this.event.context['http-method'];
             }
         }
 
     }
 
-    private static setHeaders() {
+    private setHeaders() {
         if (ApiGateway.headersAlias) {
-            ApiGateway.headers = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.headersAlias);
+            this.headers = this.getAliasValue(this.event, ApiGateway.headersAlias);
         }
-        if (!ApiGateway.headers) {
-            ApiGateway.headers = ApiGateway.event.headers;
+        if (!this.headers) {
+            this.headers = this.event.headers;
         }
-        if (!ApiGateway.headers) {
-            if (ApiGateway.event.params) {
-                ApiGateway.headers = ApiGateway.event.params.header;
+        if (!this.headers) {
+            if (this.event.params) {
+                this.headers = this.event.params.header;
             }
         }
     }
 
-    private static setBody() {
+    private setBody() {
         if (ApiGateway.bodyAlias) {
-            ApiGateway.body = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.bodyAlias);
+            this.body = this.getAliasValue(this.event, ApiGateway.bodyAlias);
         }
-        if (!ApiGateway.body) {
-            ApiGateway.body = ApiGateway.event.body;
+        if (!this.body) {
+            this.body = this.event.body;
         }
-        if (!ApiGateway.body) {
-            ApiGateway.body = ApiGateway.event['body-json'];
+        if (!this.body) {
+            this.body = this.event['body-json'];
         }
     }
 
-    private static setStageVariables() {
+    private setStageVariables() {
         if (ApiGateway.stageVariablesAlias) {
-            ApiGateway.stageVariables = ApiGateway.getAliasValue(ApiGateway.event, ApiGateway.stageVariablesAlias);
+            this.stageVariables = this.getAliasValue(this.event, ApiGateway.stageVariablesAlias);
         }
-        if (!ApiGateway.stageVariables) {
-            ApiGateway.stageVariables = ApiGateway.event.stageVariables;
+        if (!this.stageVariables) {
+            this.stageVariables = this.event.stageVariables;
         }
-        if (!ApiGateway.stageVariables) {
-            ApiGateway.stageVariables = ApiGateway.event['stage-variables'];
+        if (!this.stageVariables) {
+            this.stageVariables = this.event['stage-variables'];
         }
     }
 
-    private static resetHttpVariables() {
-        ApiGateway.queryParams = null;
-        ApiGateway.pathParams = null;
-        ApiGateway.method = null;
-        ApiGateway.headers = null;
-        ApiGateway.body = null;
-        ApiGateway.stageVariables = null;
+    private resetHttpVariables() {
+        this.queryParams = null;
+        this.pathParams = null;
+        this.method = null;
+        this.headers = null;
+        this.body = null;
+        this.stageVariables = null;
     }
 
-    public static prepareHttpRequestVariables(event, context) {
-        ApiGateway.event = event;
-        ApiGateway.context = context;
-        ApiGateway.resetHttpVariables();
+    public prepareHttpRequestVariables(event, context) {
+        this.event = event;
+        this.context = context;
+        this.resetHttpVariables();
 
         if (event) {
-            ApiGateway.setQueryParams();
-            ApiGateway.setPathParams();
-            ApiGateway.setMethod();
-            ApiGateway.setHeaders();
-            ApiGateway.setBody();
-            ApiGateway.setStageVariables();
+            this.setQueryParams();
+            this.setPathParams();
+            this.setMethod();
+            this.setHeaders();
+            this.setBody();
+            this.setStageVariables();
         }
     }
 
@@ -325,26 +325,26 @@ export class ApiGateway {
         return args;
     }
 
-    private static getResourcePath() {
+    private getResourcePath() {
         let resourcePath;
         if (ApiGateway.pathConfig) {
-            resourcePath = this.getObjectValue(ApiGateway.event, ApiGateway.pathConfig.resourcePathVariable);
+            resourcePath = this.getObjectValue(this.event, ApiGateway.pathConfig.resourcePathVariable);
         }
         if (!resourcePath) {
-            resourcePath = this.getObjectValue(ApiGateway.event, 'context.resource-path');
+            resourcePath = this.getObjectValue(this.event, 'context.resource-path');
         }
         if (!resourcePath) {
-            resourcePath = this.getObjectValue(ApiGateway.event, 'path');
+            resourcePath = this.getObjectValue(this.event, 'path');
         }
         return resourcePath;
     }
 
-    private static executePathLambdaMethod(pathToRegEx, lambda:LambdaModel, path:PathModel):boolean {
+    private executePathLambdaMethod(pathToRegEx, lambda:LambdaModel, path:PathModel):boolean {
         let keys = pathToRegEx.exec(this.getResourcePath());
         let args = ApiGateway.getArgs(keys, pathToRegEx, lambda, path);
         let verbs = ApiGateway.getHttpVerbsByMethodName(lambda, path.methodName);
         if (verbs.length) {
-            let verbExists = ApiGateway.verbExists(verbs, ApiGateway.method);
+            let verbExists = ApiGateway.verbExists(verbs, this.method);
             if (verbExists) {
                 lambda.instance[path.methodName].apply(lambda.instance, args);
                 return true;
@@ -357,7 +357,7 @@ export class ApiGateway {
         }
     }
 
-    public static executePath(lambda:LambdaModel):boolean {
+    public executePath(lambda:LambdaModel):boolean {
         let pattern;
         let pathToRegEx;
         let success;
@@ -365,59 +365,59 @@ export class ApiGateway {
             pattern = lambda.basePath + path.pattern;
             pathToRegEx = PathToRegex(pattern);
             if (pathToRegEx.test(this.getResourcePath())) {
-               success = ApiGateway.executePathLambdaMethod(pathToRegEx, lambda, path);
+               success = this.executePathLambdaMethod(pathToRegEx, lambda, path);
                if (success) { return true; }
             }
         }
         return false;
     }
 
-    private static getHeaders(lambda:LambdaModel) {
+    private getHeaders(lambda:LambdaModel) {
         if (lambda.config && !lambda.config.allowNullInjection) {
-            if (!ApiGateway.headers) {
+            if (!this.headers) {
                 return {}
             }
         }
-        return ApiGateway.headers;
+        return this.headers;
     }
 
-    private static getQueryParams(lambda:LambdaModel) {
+    private getQueryParams(lambda:LambdaModel) {
         if (lambda.config && !lambda.config.allowNullInjection) {
-            if (!ApiGateway.queryParams) {
+            if (!this.queryParams) {
                 return {}
             }
         }
-        return ApiGateway.queryParams;
+        return this.queryParams;
     }
 
-    private static getPathParams(lambda:LambdaModel) {
+    private getPathParams(lambda:LambdaModel) {
         if (lambda.config && !lambda.config.allowNullInjection) {
-            if (!ApiGateway.pathParams) {
+            if (!this.pathParams) {
                 return {}
             }
         }
-        return ApiGateway.pathParams;
+        return this.pathParams;
     }
 
-    public static setLambdaProperties(lambda:LambdaModel) {
+    public setLambdaProperties(lambda:LambdaModel) {
         if (!lambda) { return; }
         if (lambda.headersProperty) {
-            lambda.instance[lambda.headersProperty] = ApiGateway.getHeaders(lambda);
+            lambda.instance[lambda.headersProperty] = this.getHeaders(lambda);
         }
         if (lambda.queryParamsProperty) {
-            lambda.instance[lambda.queryParamsProperty] = ApiGateway.getQueryParams(lambda);
+            lambda.instance[lambda.queryParamsProperty] = this.getQueryParams(lambda);
         }
         if (lambda.pathParamsProperty) {
-            lambda.instance[lambda.pathParamsProperty] = ApiGateway.getPathParams(lambda)
+            lambda.instance[lambda.pathParamsProperty] = this.getPathParams(lambda)
         }
         if (lambda.methodProperty) {
-            lambda.instance[lambda.methodProperty] = ApiGateway.method;
+            lambda.instance[lambda.methodProperty] = this.method;
         }
         if (lambda.bodyProperty) {
-            lambda.instance[lambda.bodyProperty] = ApiGateway.body;
+            lambda.instance[lambda.bodyProperty] = this.body;
         }
         if (lambda.stageVariablesProperty) {
-            lambda.instance[lambda.stageVariablesProperty] = ApiGateway.stageVariables;
+            lambda.instance[lambda.stageVariablesProperty] = this.stageVariables;
         }
     }
 }

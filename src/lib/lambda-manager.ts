@@ -9,6 +9,8 @@ export default class LambdaManager {
     private _context;
     private _callback;
 
+    private _apiGateway:ApiGateway;
+
     private _lambdaModels:LambdaModel[] = [];
     private _lambdas:Object[] = [];
 
@@ -98,13 +100,13 @@ export default class LambdaManager {
             lambda.basePath = target.__path;
             lambda.config = target.__lambdaConfig;
             this.setLambdaProperties(lambda);
-            ApiGateway.setLambdaProperties(lambda);
+            this.apiGateway.setLambdaProperties(lambda);
             this.executePostConstructor(lambda);
             this.executeHandler(lambda);
             this.setPreLambdaTimeoutMethod(lambda);
-            hasPath = ApiGateway.executePath(lambda);
+            hasPath = this.apiGateway.executePath(lambda);
             if (!hasPath) {
-                ApiGateway.executeHttpRequest(lambda);
+                this.apiGateway.executeHttpRequest(lambda);
             }
         }
     }
@@ -204,4 +206,11 @@ export default class LambdaManager {
         this._rawHandler = value;
     }
 
+    get apiGateway(): ApiGateway {
+        return this._apiGateway;
+    }
+
+    set apiGateway(value: ApiGateway) {
+        this._apiGateway = value;
+    }
 }

@@ -1,5 +1,9 @@
 # Change Log
 
+1.0.25
+* Convert ApiGateway static methods
+* Use instance class of ApiGateway to avoid race condition
+
 1.0.24
 * Fix variable setting, reset for every new event
 

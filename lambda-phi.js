@@ -8,10 +8,12 @@ var api_gateway_1 = require("./lib/api-gateway");
 var lambdaManager = new lambda_manager_1.default();
 lambda_manager_1.default.instance = lambdaManager;
 function LambdaHandler(event, context, callback) {
+    var apiGateway = new api_gateway_1.ApiGateway();
+    lambdaManager.apiGateway = apiGateway;
     lambdaManager.event = event;
-    api_gateway_1.ApiGateway.prepareHttpRequestVariables(event, context);
     lambdaManager.context = context;
     lambdaManager.callback = callback;
+    apiGateway.prepareHttpRequestVariables(event, context);
     lambdaManager.processLambdas();
 }
 exports.LambdaHandler = LambdaHandler;

@@ -10,11 +10,13 @@ let lambdaManager = new LambdaManager();
 LambdaManager.instance = lambdaManager;
 
 export function LambdaHandler(event, context, callback) {
+    let apiGateway = new ApiGateway();
+    lambdaManager.apiGateway = apiGateway;
     lambdaManager.event = event;
-    ApiGateway.prepareHttpRequestVariables(event, context);
-
     lambdaManager.context = context;
     lambdaManager.callback = callback;
+
+    apiGateway.prepareHttpRequestVariables(event, context);
     lambdaManager.processLambdas();
 }
 
