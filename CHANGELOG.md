@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.24
+* Fix variable setting, reset for every new event
+
 1.0.23
 * Fix method check
 

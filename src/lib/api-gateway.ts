@@ -266,9 +266,19 @@ export class ApiGateway {
         }
     }
 
+    private static resetHttpVariables() {
+        ApiGateway.queryParams = null;
+        ApiGateway.pathParams = null;
+        ApiGateway.method = null;
+        ApiGateway.headers = null;
+        ApiGateway.body = null;
+        ApiGateway.stageVariables = null;
+    }
+
     public static prepareHttpRequestVariables(event, context) {
         ApiGateway.event = event;
         ApiGateway.context = context;
+        ApiGateway.resetHttpVariables();
 
         if (event) {
             ApiGateway.setQueryParams();
