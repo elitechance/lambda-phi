@@ -1,5 +1,8 @@
 # Change Log
 
+1.0.26
+* Fix lambda-phi.d.ts
+
 1.0.25
 * Convert ApiGateway static methods
 * Use instance class of ApiGateway to avoid race condition
