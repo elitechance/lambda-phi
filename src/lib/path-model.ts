@@ -1,4 +1,4 @@
-import PathParamModel from "../../lib/path-param-model";
+import PathParamModel from "../lib/path-param-model";
 /**
  * Created by EGomez on 5/4/17.
  */

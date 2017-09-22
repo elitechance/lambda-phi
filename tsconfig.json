@@ -4,13 +4,11 @@
     "target": "es5",
     "sourceMap": false,
     "rootDir":"src/",
-    "outDir":"./",
+    "outDir":"./dist",
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
   "include": ["src/**/*"],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": [ "node_modules" ]
 }
