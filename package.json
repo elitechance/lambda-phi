@@ -1,9 +1,9 @@
 {
   "name": "lambda-phi",
-  "version": "1.0.27",
+  "version": "1.0.28",
   "description": "Typescript framework for AWS API Gateway and Lambda",
   "main": "./lambda-phi.js",
-  "types":"./lambda-phi.d.ts",
+  "types": "./lambda-phi.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,12 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/elitechance/lambda-phi.git"
   },
-  "keywords": [
-    "api gateway",
-    "lambda",
-    "aws",
-    "typescript"
-  ],
+  "keywords": ["api gateway", "lambda", "aws", "typescript"],
   "author": "Ethan Dave B. Gomez",
   "license": "MIT",
   "bugs": {
@@ -25,7 +20,8 @@
   "homepage": "https://github.com/elitechance/lambda-phi#readme",
   "devDependencies": {
     "@types/node": "^7.0.5",
-    "@types/path-to-regexp": "^1.7.0"
+    "@types/path-to-regexp": "^1.7.0",
+    "typescript": "^2.8.1"
   },
   "dependencies": {
     "path-to-regexp": "^1.7.0"

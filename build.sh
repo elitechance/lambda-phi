@@ -1,3 +1,3 @@
 #!/bin/sh
-tsc
+./node_modules/.bin/tsc
 cp package.json dist/
