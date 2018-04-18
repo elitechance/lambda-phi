@@ -1,3 +1,3 @@
 #!/bin/sh
 ./node_modules/.bin/tsc
-cp package.json dist/
+cp package.json README.md CHANGELOG.md dist/

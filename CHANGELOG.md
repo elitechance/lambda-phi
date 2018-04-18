@@ -1,6 +1,10 @@
 # Change Log
 
-1.0.28
+1.0.29
+
+* Add readme and change log in build needed for npm publish
+
+  1.0.28
 
 * Add typescript declaration
 * Fix README formatting and follow common standard
