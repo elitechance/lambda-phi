@@ -1,6 +1,26 @@
 # Change Log
 
-1.0.29
+2.0.0
+
+* Upgrade typescript to 7.x, @types/node to 26.x and path-to-regexp to 8.x
+* Remove deprecated @types/path-to-regexp
+* Requires Node.js 20 or later
+* Add `LambdaAsyncHandler` for Node.js 24+ Lambda runtimes, which no longer support callback handlers
+* Support API Gateway HTTP API payload format 2.0, method from `requestContext.http.method` and path from `rawPath`
+* Compile target is now ES2022
+* Breaking: wildcard routes need a name, `@Path('/files/*filepath')`. Value is injected as an array of path segments
+* Breaking: path params are now URL decoded
+* Breaking: fix @PathParams() on passthrough events, it was injecting `params.querystring` instead of `params.path`
+* Breaking: fix @QueryParams() on passthrough events, it was always empty instead of `params.querystring`
+* Breaking: @QueryParams() now follows the documented fallback order `event.queryParams`, `event.queryStringParameters`, `event['params'].querystring`
+* Breaking: @QueryParams('alias') falls back to the default fields when the alias is missing, like the other decorators
+* Fix alias array skipping the remaining aliases when a deep alias like `context.http-method` is missing
+* Fix crash `Cannot set properties of null (setting 'basePath')` when a @Lambda() class has no decorated members
+* Fix @Path type signature when used as a class decorator
+* Add unit tests, `npm test` and `npm run coverage`
+* Add AWS SAM local API Gateway tests for REST API and HTTP API payloads on Node.js 22 and 24, `npm run test:sam`
+
+  1.0.29
 
 * Add readme and change log in build needed for npm publish
 

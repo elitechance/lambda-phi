@@ -1,29 +1,39 @@
 {
   "name": "lambda-phi",
-  "version": "1.0.29",
+  "version": "2.0.0",
   "description": "Typescript framework for AWS API Gateway and Lambda",
   "main": "./lambda-phi.js",
   "types": "./lambda-phi.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "sh build.sh",
+    "test": "tsc -p test && node --test \"test/.build/test/**/*.test.js\"",
+    "test:sam": "sh test/sam/run.sh nodejs22.x handler.handler && sh test/sam/run.sh nodejs24.x handler.asyncHandler",
+    "coverage": "tsc -p test && node --test --enable-source-maps --experimental-test-coverage --test-coverage-exclude=\"**/test/**\" --test-coverage-exclude=\"**/node_modules/**\" --test-coverage-lines=95 --test-coverage-branches=95 --test-coverage-functions=95 \"test/.build/test/**/*.test.js\""
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/elitechance/lambda-phi.git"
   },
-  "keywords": ["api gateway", "lambda", "aws", "typescript"],
+  "keywords": [
+    "api gateway",
+    "lambda",
+    "aws",
+    "typescript"
+  ],
   "author": "Ethan Dave B. Gomez",
   "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
   "bugs": {
     "url": "https://github.com/elitechance/lambda-phi/issues"
   },
   "homepage": "https://github.com/elitechance/lambda-phi#readme",
   "devDependencies": {
-    "@types/node": "^7.0.5",
-    "@types/path-to-regexp": "^1.7.0",
-    "typescript": "^2.8.1"
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
   },
   "dependencies": {
-    "path-to-regexp": "^1.7.0"
+    "path-to-regexp": "^8.4.2"
   }
 }

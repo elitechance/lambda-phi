@@ -20,6 +20,22 @@ export function LambdaHandler(event, context, callback) {
     lambdaManager.processLambdas();
 }
 
+/**
+ * Promise based handler for Node.js 24+ runtimes, which no longer support callback handlers.
+ * Resolves or rejects when a lambda method calls this.callback().
+ */
+export function LambdaAsyncHandler(event, context):Promise<any> {
+    return new Promise((resolve, reject) => {
+        LambdaHandler(event, context, (error, message) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve(message);
+        });
+    });
+}
+
 export function Lambda(lambdaConfig?:LambdaConfig) {
     return function(target:any) {
         lambdaManager.setLambda(target, lambdaConfig);

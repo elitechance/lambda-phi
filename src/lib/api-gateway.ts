@@ -6,7 +6,7 @@ import LambdaManager from "./lambda-manager";
 import LambdaModel from "./lambda-model";
 import HttpModel from "./http-model";
 import PathModel from "./path-model";
-import PathToRegex = require('path-to-regexp');
+import {match, ParamData} from 'path-to-regexp';
 import PathParamModel from "./path-param-model";
 import HttpVerbModel from "./http-verb-model";
 
@@ -157,7 +157,7 @@ export class ApiGateway {
             if (info.length == 6) { return object[info[0]][info[1]][info[2]][info[3]][info[4]][info[5]]; }
         }
         catch (error) {
-            return "";
+            return undefined;
         }
     }
 
@@ -180,15 +180,15 @@ export class ApiGateway {
         if (ApiGateway.queryParamsAlias) {
             this.queryParams = this.getAliasValue(this.event, ApiGateway.queryParamsAlias);
         }
-        if (!ApiGateway.queryParamsAlias) {
+        if (!this.queryParams) {
             this.queryParams = this.event.queryParams;
         }
-        if (!ApiGateway.queryParamsAlias) {
+        if (!this.queryParams) {
             this.queryParams = this.event.queryStringParameters;
         }
-        if (!ApiGateway.queryParamsAlias) {
+        if (!this.queryParams) {
             if (this.event.params) {
-                this.pathParams = this.event.params.querystring;
+                this.queryParams = this.event.params.querystring;
             }
         }
     }
@@ -225,7 +225,9 @@ export class ApiGateway {
                 this.method = this.event.context['http-method'];
             }
         }
-
+        if (!this.method) {
+            this.method = this.getObjectValue(this.event, 'requestContext.http.method');
+        }
     }
 
     private setHeaders() {
@@ -309,18 +311,12 @@ export class ApiGateway {
         return false;
     }
 
-    private static getArgs(keys, pathToRegEx, lambda:LambdaModel, path:PathModel) {
+    private static getArgs(params:ParamData, lambda:LambdaModel, path:PathModel) {
         let args = [];
-        let value;
-        let i = 1;
-        for (let key of pathToRegEx.keys) {
-            value = keys[i++];
-            lambda.pathParams.map(pathParam => {
-                if (pathParam.methodName === path.methodName && key.name == pathParam.name) {
-                    args[pathParam.index] = value;
-                }
-                return pathParam;
-            });
+        for (let pathParam of lambda.pathParams) {
+            if (pathParam.methodName === path.methodName && pathParam.name in params) {
+                args[pathParam.index] = params[pathParam.name];
+            }
         }
         return args;
     }
@@ -336,12 +332,14 @@ export class ApiGateway {
         if (!resourcePath) {
             resourcePath = this.getObjectValue(this.event, 'path');
         }
+        if (!resourcePath) {
+            resourcePath = this.getObjectValue(this.event, 'rawPath');
+        }
         return resourcePath;
     }
 
-    private executePathLambdaMethod(pathToRegEx, lambda:LambdaModel, path:PathModel):boolean {
-        let keys = pathToRegEx.exec(this.getResourcePath());
-        let args = ApiGateway.getArgs(keys, pathToRegEx, lambda, path);
+    private executePathLambdaMethod(params:ParamData, lambda:LambdaModel, path:PathModel):boolean {
+        let args = ApiGateway.getArgs(params, lambda, path);
         let verbs = ApiGateway.getHttpVerbsByMethodName(lambda, path.methodName);
         if (verbs.length) {
             let verbExists = ApiGateway.verbExists(verbs, this.method);
@@ -358,14 +356,14 @@ export class ApiGateway {
     }
 
     public executePath(lambda:LambdaModel):boolean {
-        let pattern;
-        let pathToRegEx;
+        let resourcePath = this.getResourcePath();
+        let result;
         let success;
+        if (typeof resourcePath !== 'string') { return false; }
         for(let path of lambda.paths) {
-            pattern = lambda.basePath + path.pattern;
-            pathToRegEx = PathToRegex(pattern);
-            if (pathToRegEx.test(this.getResourcePath())) {
-               success = this.executePathLambdaMethod(pathToRegEx, lambda, path);
+            result = match(lambda.basePath + path.pattern)(resourcePath);
+            if (result) {
+               success = this.executePathLambdaMethod(result.params, lambda, path);
                if (success) { return true; }
             }
         }
@@ -517,7 +515,7 @@ export function StageVariables(alias?:any) {
 }
 
 export function Path(pattern:string) {
-    return function(target: Object, propertyKey: string ) {
+    return function(target: Object, propertyKey?: string ) {
         /*
          * We're managing two types of signature using one decorator name
          * If target is an object, @Path is a method decorator, otherwise is a class decorator

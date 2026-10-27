@@ -45,3 +45,5 @@ proxy.json
 passthrough.json
 .vscode
 dist
+test/.build
+test/sam/.build
