@@ -5,9 +5,9 @@
     - ~~@Path( '/generic/route' )~~
     - ~~@Path( '/route/path/with/method/filter/')~~
     - ~~@Path( '/route/with/path/variable/:id')~~
-    - ~~@Path( '/route/with/regex/*' )~~
+    - ~~@Path( '/route/with/wildcard/*path' )~~
 
-* Support for base path    
+* ~~Support for base path~~
 ```typescript
 @Path('/v1')
 class SampleClass {
@@ -21,7 +21,7 @@ class SampleClass {
 }
 ```
 
-* Support for path param
+* ~~Support for path param~~
 ```typescript
 class PathParamClass {
     @Path('/book/:id')

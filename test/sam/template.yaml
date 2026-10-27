@@ -1,0 +1,53 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: lambda-phi local API Gateway tests, one API per payload format
+
+Parameters:
+  Runtime:
+    Type: String
+    Default: nodejs22.x
+  Handler:
+    Type: String
+    Default: handler.handler
+
+Globals:
+  Function:
+    Runtime: !Ref Runtime
+    Handler: !Ref Handler
+    CodeUri: .build/
+    Timeout: 10
+
+Resources:
+  # REST API, Lambda proxy integration --> payload 1.0
+  RestApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        Books:
+          Type: Api
+          Properties:
+            Path: /rest/{proxy+}
+            Method: any
+
+  # HTTP API --> payload 1.0
+  HttpApiV1Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        Books:
+          Type: HttpApi
+          Properties:
+            Path: /http1/{proxy+}
+            Method: any
+            PayloadFormatVersion: '1.0'
+
+  # HTTP API --> payload 2.0 (default)
+  HttpApiV2Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Events:
+        Books:
+          Type: HttpApi
+          Properties:
+            Path: /http2/{proxy+}
+            Method: any

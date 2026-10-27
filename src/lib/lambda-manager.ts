@@ -97,6 +97,7 @@ export default class LambdaManager {
         for (let i = 0; i < length;i++) {
             target = this._lambdas[i];
             lambda = this.getLambdaByName(target.name);
+            if (!lambda) { continue; }
             lambda.basePath = target.__path;
             lambda.config = target.__lambdaConfig;
             this.setLambdaProperties(lambda);

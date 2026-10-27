@@ -1,13 +1,14 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
+    "module": "nodenext",
+    "target": "es2022",
     "sourceMap": false,
     "rootDir": "src/",
     "outDir": "./dist",
     "esModuleInterop": true,
     "declaration": true,
-    "moduleResolution": "node",
+    "strict": false,
+    "types": ["node"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },

@@ -201,7 +201,7 @@ declare module 'lambda-phi/lib/api-gateway' {
     export function PathParams(alias?: any): (target: Object, propertyKey: string) => void;
     export function Method(alias?: any): (target: Object, propertyKey: string) => void;
     export function Body(alias?: any): (target: Object, propertyKey: string) => void;
-    export function Path(pattern: string): (target: Object, propertyKey: string) => void;
+    export function Path(pattern: string): (target: Object, propertyKey?: string) => void;
     export function PathConfig(config: any): (target: any) => void;
     export function PathParam(name: string): (target: Object, propertyKey: string, index: number) => void;
     export function StageVariables(alias?: any): (target: Object, propertyKey: string) => void;
